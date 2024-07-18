@@ -28,29 +28,31 @@ LINETYPE = 1
 
 def parse_args():
     parser = argparse.ArgumentParser(description='MMAction2 demo')
-    parser.add_argument('video', help='video file/url')
-    parser.add_argument('out_filename', help='output filename')
+    parser.add_argument('--video', default='/workspace/demo/demo_skeleton.mp4', help='video file/url')
+    parser.add_argument('--out_filename', default='/workspace/output', help='output filename')
     parser.add_argument(
         '--config',
-        default=('configs/skeleton/posec3d/'
+        default=('/workspace/configs/skeleton/posec3d'
                  'slowonly_r50_8xb16-u48-240e_ntu60-xsub-keypoint.py'),
         help='skeleton model config file path')
     parser.add_argument(
         '--checkpoint',
-        default=('https://download.openmmlab.com/mmaction/skeleton/posec3d/'
-                 'slowonly_r50_u48_240e_ntu60_xsub_keypoint/'
-                 'slowonly_r50_u48_240e_ntu60_xsub_keypoint-f3adabf1.pth'),
+        default='/workspace/checkpoint/slowonly_r50_u48_240e_ntu60_xsub_keypoint-f3adabf1.pth',
+        # default=('https://download.openmmlab.com/mmaction/skeleton/posec3d/'
+        #          'slowonly_r50_u48_240e_ntu60_xsub_keypoint/'
+        #          'slowonly_r50_u48_240e_ntu60_xsub_keypoint-f3adabf1.pth'),
         help='skeleton model checkpoint file/url')
     parser.add_argument(
         '--det-config',
-        default='demo/demo_configs/faster-rcnn_r50_fpn_2x_coco_infer.py',
+        default='/workspace/demo/demo_configs/faster-rcnn_r50_fpn_2x_coco_infer.py',
         help='human detection config file path (from mmdet)')
     parser.add_argument(
         '--det-checkpoint',
-        default=('http://download.openmmlab.com/mmdetection/v2.0/faster_rcnn/'
-                 'faster_rcnn_r50_fpn_2x_coco/'
-                 'faster_rcnn_r50_fpn_2x_coco_'
-                 'bbox_mAP-0.384_20200504_210434-a5d8aa15.pth'),
+        default='/workspace/checkpoint/faster_rcnn_r50_fpn_2x_coco_bbox_mAP-0.384_20200504_210434-a5d8aa15.pth',
+        # default=('http://download.openmmlab.com/mmdetection/v2.0/faster_rcnn/'
+        #          'faster_rcnn_r50_fpn_2x_coco/'
+        #          'faster_rcnn_r50_fpn_2x_coco_'
+        #          'bbox_mAP-0.384_20200504_210434-a5d8aa15.pth'),
         help='human detection checkpoint file/url')
     parser.add_argument(
         '--det-score-thr',
@@ -64,17 +66,18 @@ def parse_args():
         help='the category id for human detection')
     parser.add_argument(
         '--pose-config',
-        default='demo/demo_configs/'
+        default='/workspace/demo/demo_configs/'
         'td-hm_hrnet-w32_8xb64-210e_coco-256x192_infer.py',
         help='human pose estimation config file path (from mmpose)')
     parser.add_argument(
         '--pose-checkpoint',
-        default=('https://download.openmmlab.com/mmpose/top_down/hrnet/'
-                 'hrnet_w32_coco_256x192-c78dce93_20200708.pth'),
+        default='/workspace/checkpoint/hrnet_w32_coco_256x192-c78dce93_20200708.pth',
+        # default=('https://download.openmmlab.com/mmpose/top_down/hrnet/'
+        #          'hrnet_w32_coco_256x192-c78dce93_20200708.pth'),
         help='human pose estimation checkpoint file/url')
     parser.add_argument(
         '--label-map',
-        default='tools/data/skeleton/label_map_ntu60.txt',
+        default='/workspace/tools/data/skeleton/label_map_ntu60.txt',
         help='label map file')
     parser.add_argument(
         '--device', type=str, default='cuda:0', help='CPU/CUDA device option')
