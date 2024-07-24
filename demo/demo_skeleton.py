@@ -29,31 +29,36 @@ LINETYPE = 1
 def parse_args():
     parser = argparse.ArgumentParser(description='MMAction2 demo')
     parser.add_argument('--video', default='/workspace/demo/demo_skeleton.mp4', help='video file/url')
-    parser.add_argument('--out_filename', default='/workspace/output', help='output filename')
+    parser.add_argument('--out_filename', default='/workspace/output/skeleton_demo.mp4', help='output filename')
+
+    # posec3d 설정 및 가중치
     parser.add_argument(
         '--config',
-        default=('/workspace/configs/skeleton/posec3d'
+        default=('/workspace/configs/skeleton/posec3d/'
                  'slowonly_r50_8xb16-u48-240e_ntu60-xsub-keypoint.py'),
         help='skeleton model config file path')
     parser.add_argument(
-        '--checkpoint',
-        default='/workspace/checkpoint/slowonly_r50_u48_240e_ntu60_xsub_keypoint-f3adabf1.pth',
+        '--checkpoints',
+        default='/workspace/checkpoints/slowonly_r50_u48_240e_ntu60_xsub_keypoint-f3adabf1.pth',
         # default=('https://download.openmmlab.com/mmaction/skeleton/posec3d/'
         #          'slowonly_r50_u48_240e_ntu60_xsub_keypoint/'
         #          'slowonly_r50_u48_240e_ntu60_xsub_keypoint-f3adabf1.pth'),
-        help='skeleton model checkpoint file/url')
+        help='skeleton model checkpoints file/url')
+
+    # faster rcnn 설정 및 가중치
     parser.add_argument(
         '--det-config',
         default='/workspace/demo/demo_configs/faster-rcnn_r50_fpn_2x_coco_infer.py',
         help='human detection config file path (from mmdet)')
     parser.add_argument(
-        '--det-checkpoint',
-        default='/workspace/checkpoint/faster_rcnn_r50_fpn_2x_coco_bbox_mAP-0.384_20200504_210434-a5d8aa15.pth',
+        '--det-checkpoints',
+        default='/workspace/checkpoints/faster_rcnn_r50_fpn_2x_coco_bbox_mAP-0.384_20200504_210434-a5d8aa15.pth',
         # default=('http://download.openmmlab.com/mmdetection/v2.0/faster_rcnn/'
         #          'faster_rcnn_r50_fpn_2x_coco/'
         #          'faster_rcnn_r50_fpn_2x_coco_'
         #          'bbox_mAP-0.384_20200504_210434-a5d8aa15.pth'),
-        help='human detection checkpoint file/url')
+        help='human detection checkpoints file/url')
+    
     parser.add_argument(
         '--det-score-thr',
         type=float,
@@ -64,17 +69,19 @@ def parse_args():
         type=int,
         default=0,
         help='the category id for human detection')
+    
+    # pose 설정 및 가중치
     parser.add_argument(
         '--pose-config',
         default='/workspace/demo/demo_configs/'
         'td-hm_hrnet-w32_8xb64-210e_coco-256x192_infer.py',
         help='human pose estimation config file path (from mmpose)')
     parser.add_argument(
-        '--pose-checkpoint',
-        default='/workspace/checkpoint/hrnet_w32_coco_256x192-c78dce93_20200708.pth',
+        '--pose-checkpoints',
+        default='/workspace/checkpoints/hrnet_w32_coco_256x192-c78dce93_20200708.pth',
         # default=('https://download.openmmlab.com/mmpose/top_down/hrnet/'
         #          'hrnet_w32_coco_256x192-c78dce93_20200708.pth'),
-        help='human pose estimation checkpoint file/url')
+        help='human pose estimation checkpoints file/url')
     parser.add_argument(
         '--label-map',
         default='/workspace/tools/data/skeleton/label_map_ntu60.txt',
@@ -137,14 +144,14 @@ def main():
     h, w, _ = frames[0].shape
 
     # Get Human detection results.
-    det_results, _ = detection_inference(args.det_config, args.det_checkpoint,
+    det_results, _ = detection_inference(args.det_config, args.det_checkpoints,
                                          frame_paths, args.det_score_thr,
                                          args.det_cat_id, args.device)
     torch.cuda.empty_cache()
 
     # Get Pose estimation results.
     pose_results, pose_data_samples = pose_inference(args.pose_config,
-                                                     args.pose_checkpoint,
+                                                     args.pose_checkpoints,
                                                      frame_paths, det_results,
                                                      args.device)
     torch.cuda.empty_cache()
@@ -152,7 +159,7 @@ def main():
     config = mmengine.Config.fromfile(args.config)
     config.merge_from_dict(args.cfg_options)
 
-    model = init_recognizer(config, args.checkpoint, args.device)
+    model = init_recognizer(config, args.checkpoints, args.device)
     result = inference_skeleton(model, pose_results, (h, w))
 
     max_pred_index = result.pred_score.argmax().item()

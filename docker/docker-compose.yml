@@ -21,7 +21,7 @@ services:
       - ${HOME_DIR}/.Xauthority:/root/.Xauthority
       - /run/user/1000/pulse:/run/user/1000/pulse
       - /dev/snd:/dev/snd
-      - ${HOME_DIR}/HDD:/HDD
+      - /data:/data
     devices:
       - /dev/snd:/dev/snd
     environment:
