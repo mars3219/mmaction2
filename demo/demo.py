@@ -12,10 +12,10 @@ from mmaction.visualization import ActionVisualizer
 
 def parse_args():
     parser = argparse.ArgumentParser(description='MMAction2 demo')
-    parser.add_argument('config', help='test config file path')
-    parser.add_argument('checkpoint', help='checkpoint file/url')
-    parser.add_argument('video', help='video file/url or rawframes directory')
-    parser.add_argument('label', help='label file')
+    parser.add_argument('--config', default='/workspace/configs/recognition/tsm/tsm_imagenet-pretrained-r50_8xb16-1x1x16-50e_kinetics400-rgb.py', help='test config file path')
+    parser.add_argument('--checkpoint', default='/workspace/checkpoints/tsm_imagenet-pretrained-r50_8xb16-1x1x16-50e_kinetics400-rgb_20220831-042b1748.pth', help='checkpoint file/url')
+    parser.add_argument('--video', default='/workspace/demo/demo.mp4', help='video file/url or rawframes directory')
+    parser.add_argument('--label', default='/workspace/tools/data/kinetics/label_map_k400.txt', help='label file')
     parser.add_argument(
         '--cfg-options',
         nargs='+',
