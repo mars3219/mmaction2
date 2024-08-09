@@ -12,8 +12,8 @@ from mmaction.visualization import ActionVisualizer
 
 def parse_args():
     parser = argparse.ArgumentParser(description='MMAction2 demo')
-    parser.add_argument('--config', default='demo/demo_configs/tsn_r50_1x1x8_video_infer.py', help='test config file path')
-    parser.add_argument('--checkpoint', default='checkpoints/tsn_r50_1x1x3_100e_kinetics400_rgb_20200614-e508be42.pth', help='checkpoint file/url')
+    parser.add_argument('--config', default='/workspace/demo/demo_configs/i3d_r50_32x2x1_video_infer.py', help='test config file path')
+    parser.add_argument('--checkpoint', default='/workspace/checkpoints/i3d_imagenet-pretrained-r50-nl-dot-product_8xb8-32x2x1-100e_kinetics400-rgb_20220812-8e1f2148.pth', help='checkpoint file/url')
     parser.add_argument('--video', default='sample_video/output_cropped_video.mp4', help='video file/url or rawframes directory')
     parser.add_argument('--label', default='tools/data/kinetics/label_map_k400.txt', help='label file')
     parser.add_argument(

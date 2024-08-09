@@ -13,9 +13,9 @@ from mmaction.visualization import ActionVisualizer
 def parse_args():
     parser = argparse.ArgumentParser(description='MMAction2 demo')
     # parser.add_argument('--config', default='/workspace/configs/recognition/tsm/tsm_imagenet-pretrained-r50_8xb16-1x1x16-50e_kinetics400-rgb.py', help='test config file path')
-    parser.add_argument('--config', default='/workspace/work_dir/c3d/custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb.py', help='test config file path')
-    parser.add_argument('--checkpoint', default='/workspace/work_dir/c3d/best_acc_top1_epoch_15.pth', help='checkpoint file/url')
-    parser.add_argument('--video', default='/workspace/sample_video/fight3.mp4', help='video file/url or rawframes directory')
+    parser.add_argument('--config', default='/workspace/configs/recognition/c3d/custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb.py', help='test config file path')
+    parser.add_argument('--checkpoint', default='/workspace/work_dir/custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb/best_acc_top1_epoch_10.pth', help='checkpoint file/url')
+    parser.add_argument('--video', default='/workspace/sample_video/tmp_violence.mp4', help='video file/url or rawframes directory')
     # parser.add_argument('--label', default='/workspace/tools/data/kinetics/label_map_k400.txt', help='label file')
     parser.add_argument('--label', default='/workspace/label_map_custom.txt', help='label file')
     parser.add_argument(
