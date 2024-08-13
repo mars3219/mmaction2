@@ -1,10 +1,10 @@
 {
 	"folders": [
 		{
-			"path": "../data"
+			"path": "."
 		},
 		{
-			"path": "."
+			"path": "../mmaction2"
 		}
 	],
 	"settings": {}

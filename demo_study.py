@@ -1,4 +1,6 @@
 # Copyright (c) OpenMMLab. All rights reserved.
+import matplotlib
+matplotlib.use('Agg')
 import argparse
 import os.path as osp
 from operator import itemgetter
@@ -12,9 +14,12 @@ from mmaction.visualization import ActionVisualizer
 
 def parse_args():
     parser = argparse.ArgumentParser(description='MMAction2 demo')
-    parser.add_argument('--config', default='/workspace/demo/demo_configs/i3d_r50_32x2x1_video_infer.py', help='test config file path')
-    parser.add_argument('--checkpoint', default='/workspace/checkpoints/i3d_imagenet-pretrained-r50-nl-dot-product_8xb8-32x2x1-100e_kinetics400-rgb_20220812-8e1f2148.pth', help='checkpoint file/url')
+    parser.add_argument('--config', default='/workspace/demo/demo_configs/slowonly_r50_8x8x1_nl_kinetics400-rgb_video_infer.py', help='test config file path')
+    parser.add_argument('--checkpoint', default='/workspace/checkpoints/slowonly_r50-in1k-pre-nl-embedded-gaussian_8xb16-8x8x1-steplr-150e_kinetics400-rgb_20220901-df42dc84.pth', help='checkpoint file/url')
+    # parser.add_argument('--config', default='/workspace/demo/demo_configs/tsn_r50_1x1x8_video_infer.py', help='test config file path')
+    # parser.add_argument('--checkpoint', default='/workspace/checkpoints/tsn_imagenet-pretrained-r50_8xb32-1x1x8-100e_kinetics400-rgb_20220906-2692d16c.pth', help='checkpoint file/url')
     parser.add_argument('--video', default='sample_video/output_cropped_video.mp4', help='video file/url or rawframes directory')
+    # parser.add_argument('--label', default='/workspace/tools/data/sthv2/label_map.txt', help='label file')
     parser.add_argument('--label', default='tools/data/kinetics/label_map_k400.txt', help='label file')
     parser.add_argument(
         '--cfg-options',
