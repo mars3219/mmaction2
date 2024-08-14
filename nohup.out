@@ -397,3 +397,81 @@ after_run:
 08/13 08:23:49 - mmengine - INFO - Saving checkpoint at 15 epochs
 [08:35:38] /github/workspace/src/video/video_reader.cc:737: [BytesIO]You have received more than 12 frames corrupted and recovered from nearest frames. Set environment variable `DECORD_DUPLICATE_WARNING_THRESHOLD=1.0`if you want to disable this warning.
 08/13 08:38:19 - mmengine - INFO - Epoch(val) [15][7/7]    acc/top1: 0.9573  acc/top5: 1.0000  acc/mean1: 0.9409  data_time: 108.4115  time: 108.5241
+08/13 09:05:57 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240813_021006
+08/13 09:05:57 - mmengine - INFO - Epoch(train) [16][14/14]  lr: 1.0000e-03  eta: 11:16:40  time: 111.3370  data_time: 111.0465  memory: 21685  grad_norm: 3.1840  loss: 0.0267  top1_acc: 1.0000  top5_acc: 1.0000  loss_cls: 0.0267
+08/13 09:27:57 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240813_021006
+08/13 09:27:57 - mmengine - INFO - Epoch(train) [17][14/14]  lr: 1.0000e-03  eta: 10:51:08  time: 89.7478  data_time: 89.4594  memory: 21685  grad_norm: 3.5876  loss: 0.0297  top1_acc: 1.0000  top5_acc: 1.0000  loss_cls: 0.0297
+08/13 09:47:51 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240813_021006
+08/13 09:47:51 - mmengine - INFO - Epoch(train) [18][14/14]  lr: 1.0000e-03  eta: 10:22:51  time: 78.7973  data_time: 78.5232  memory: 21685  grad_norm: 3.0560  loss: 0.0325  top1_acc: 0.9577  top5_acc: 1.0000  loss_cls: 0.0325
+08/13 10:08:00 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240813_021006
+08/13 10:08:00 - mmengine - INFO - Epoch(train) [19][14/14]  lr: 1.0000e-03  eta: 9:55:47  time: 82.1495  data_time: 81.8665  memory: 21685  grad_norm: 2.6006  loss: 0.0281  top1_acc: 1.0000  top5_acc: 1.0000  loss_cls: 0.0281
+08/13 10:30:26 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240813_021006
+08/13 10:30:26 - mmengine - INFO - Epoch(train) [20][14/14]  lr: 1.0000e-03  eta: 9:32:16  time: 96.5987  data_time: 96.3046  memory: 21685  grad_norm: 2.4231  loss: 0.0208  top1_acc: 1.0000  top5_acc: 1.0000  loss_cls: 0.0208
+08/13 10:30:26 - mmengine - INFO - Saving checkpoint at 20 epochs
+[10:42:00] /github/workspace/src/video/video_reader.cc:737: [BytesIO]You have received more than 12 frames corrupted and recovered from nearest frames. Set environment variable `DECORD_DUPLICATE_WARNING_THRESHOLD=1.0`if you want to disable this warning.
+08/13 10:44:27 - mmengine - INFO - Epoch(val) [20][7/7]    acc/top1: 0.9608  acc/top5: 1.0000  acc/mean1: 0.9472  data_time: 104.8580  time: 104.9808
+08/13 11:10:12 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240813_021006
+08/13 11:10:12 - mmengine - INFO - Epoch(train) [21][14/14]  lr: 1.0000e-04  eta: 9:12:38  time: 102.3677  data_time: 102.0877  memory: 21685  grad_norm: 2.1840  loss: 0.0184  top1_acc: 1.0000  top5_acc: 1.0000  loss_cls: 0.0184
+08/13 11:33:47 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240813_021006
+08/13 11:33:47 - mmengine - INFO - Epoch(train) [22][14/14]  lr: 1.0000e-04  eta: 8:50:12  time: 101.4303  data_time: 101.1588  memory: 21685  grad_norm: 2.1232  loss: 0.0178  top1_acc: 1.0000  top5_acc: 1.0000  loss_cls: 0.0178
+08/13 11:56:47 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240813_021006
+08/13 11:56:47 - mmengine - INFO - Epoch(train) [23][14/14]  lr: 1.0000e-04  eta: 8:27:05  time: 97.4810  data_time: 97.2164  memory: 21685  grad_norm: 1.5996  loss: 0.0125  top1_acc: 0.9859  top5_acc: 1.0000  loss_cls: 0.0125
+08/13 12:20:27 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240813_021006
+08/13 12:20:27 - mmengine - INFO - Epoch(train) [24][14/14]  lr: 1.0000e-04  eta: 8:04:35  time: 97.8175  data_time: 97.5400  memory: 21685  grad_norm: 1.9034  loss: 0.0154  top1_acc: 0.9718  top5_acc: 1.0000  loss_cls: 0.0154
+08/13 12:44:54 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240813_021006
+08/13 12:44:54 - mmengine - INFO - Epoch(train) [25][14/14]  lr: 1.0000e-04  eta: 7:42:36  time: 101.5657  data_time: 101.2852  memory: 21685  grad_norm: 1.6403  loss: 0.0123  top1_acc: 1.0000  top5_acc: 1.0000  loss_cls: 0.0123
+08/13 12:44:54 - mmengine - INFO - Saving checkpoint at 25 epochs
+[12:57:34] /github/workspace/src/video/video_reader.cc:737: [BytesIO]You have received more than 12 frames corrupted and recovered from nearest frames. Set environment variable `DECORD_DUPLICATE_WARNING_THRESHOLD=1.0`if you want to disable this warning.
+08/13 13:00:14 - mmengine - INFO - Epoch(val) [25][7/7]    acc/top1: 0.9677  acc/top5: 1.0000  acc/mean1: 0.9648  data_time: 114.7783  time: 114.8938
+08/13 13:30:29 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240813_021006
+08/13 13:30:29 - mmengine - INFO - Epoch(train) [26][14/14]  lr: 1.0000e-04  eta: 7:24:40  time: 118.7603  data_time: 118.4770  memory: 21685  grad_norm: 2.0628  loss: 0.0147  top1_acc: 1.0000  top5_acc: 1.0000  loss_cls: 0.0147
+08/13 13:54:44 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240813_021006
+08/13 13:54:44 - mmengine - INFO - Epoch(train) [27][14/14]  lr: 1.0000e-04  eta: 7:01:49  time: 100.9733  data_time: 100.7045  memory: 21685  grad_norm: 2.0450  loss: 0.0196  top1_acc: 0.9859  top5_acc: 1.0000  loss_cls: 0.0196
+08/13 14:18:38 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240813_021006
+08/13 14:18:38 - mmengine - INFO - Epoch(train) [28][14/14]  lr: 1.0000e-04  eta: 6:38:40  time: 89.2380  data_time: 88.9721  memory: 21685  grad_norm: 1.8417  loss: 0.0171  top1_acc: 1.0000  top5_acc: 1.0000  loss_cls: 0.0171
+08/13 14:42:18 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240813_021006
+08/13 14:42:18 - mmengine - INFO - Epoch(train) [29][14/14]  lr: 1.0000e-04  eta: 6:15:20  time: 101.6792  data_time: 101.4045  memory: 21685  grad_norm: 1.6934  loss: 0.0127  top1_acc: 1.0000  top5_acc: 1.0000  loss_cls: 0.0127
+08/13 15:05:49 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240813_021006
+08/13 15:05:49 - mmengine - INFO - Epoch(train) [30][14/14]  lr: 1.0000e-04  eta: 5:51:54  time: 105.0018  data_time: 104.6967  memory: 21685  grad_norm: 1.6163  loss: 0.0118  top1_acc: 1.0000  top5_acc: 1.0000  loss_cls: 0.0118
+08/13 15:05:49 - mmengine - INFO - Saving checkpoint at 30 epochs
+[15:18:17] /github/workspace/src/video/video_reader.cc:737: [BytesIO]You have received more than 12 frames corrupted and recovered from nearest frames. Set environment variable `DECORD_DUPLICATE_WARNING_THRESHOLD=1.0`if you want to disable this warning.
+08/13 15:20:44 - mmengine - INFO - Epoch(val) [30][7/7]    acc/top1: 0.9689  acc/top5: 1.0000  acc/mean1: 0.9630  data_time: 111.5851  time: 111.7088
+08/13 15:48:22 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240813_021006
+08/13 15:48:22 - mmengine - INFO - Epoch(train) [31][14/14]  lr: 1.0000e-04  eta: 5:30:20  time: 118.6658  data_time: 118.3811  memory: 21685  grad_norm: 1.8945  loss: 0.0129  top1_acc: 1.0000  top5_acc: 1.0000  loss_cls: 0.0129
+08/13 16:15:33 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240813_021006
+08/13 16:15:33 - mmengine - INFO - Epoch(train) [32][14/14]  lr: 1.0000e-04  eta: 5:08:11  time: 108.2832  data_time: 108.0005  memory: 21685  grad_norm: 1.4082  loss: 0.0093  top1_acc: 1.0000  top5_acc: 1.0000  loss_cls: 0.0093
+08/13 16:40:56 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240813_021006
+08/13 16:40:56 - mmengine - INFO - Epoch(train) [33][14/14]  lr: 1.0000e-04  eta: 4:45:05  time: 110.1449  data_time: 109.8593  memory: 21685  grad_norm: 1.8802  loss: 0.0114  top1_acc: 1.0000  top5_acc: 1.0000  loss_cls: 0.0114
+08/13 17:02:52 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240813_021006
+08/13 17:02:52 - mmengine - INFO - Epoch(train) [34][14/14]  lr: 1.0000e-04  eta: 4:20:44  time: 97.1339  data_time: 96.8617  memory: 21685  grad_norm: 2.0176  loss: 0.0134  top1_acc: 1.0000  top5_acc: 1.0000  loss_cls: 0.0134
+08/13 17:24:19 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240813_021006
+08/13 17:24:19 - mmengine - INFO - Epoch(train) [35][14/14]  lr: 1.0000e-04  eta: 3:56:24  time: 100.7505  data_time: 100.4689  memory: 21685  grad_norm: 1.9432  loss: 0.0125  top1_acc: 1.0000  top5_acc: 1.0000  loss_cls: 0.0125
+08/13 17:24:19 - mmengine - INFO - Saving checkpoint at 35 epochs
+[17:35:49] /github/workspace/src/video/video_reader.cc:737: [BytesIO]You have received more than 12 frames corrupted and recovered from nearest frames. Set environment variable `DECORD_DUPLICATE_WARNING_THRESHOLD=1.0`if you want to disable this warning.
+08/13 17:38:20 - mmengine - INFO - Epoch(val) [35][7/7]    acc/top1: 0.9700  acc/top5: 1.0000  acc/mean1: 0.9651  data_time: 104.6898  time: 104.8075
+08/13 18:03:40 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240813_021006
+08/13 18:03:40 - mmengine - INFO - Epoch(train) [36][14/14]  lr: 1.0000e-04  eta: 3:33:11  time: 107.6736  data_time: 107.3834  memory: 21685  grad_norm: 1.6439  loss: 0.0092  top1_acc: 1.0000  top5_acc: 1.0000  loss_cls: 0.0092
+08/13 18:25:51 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240813_021006
+08/13 18:25:51 - mmengine - INFO - Epoch(train) [37][14/14]  lr: 1.0000e-04  eta: 3:09:10  time: 91.2686  data_time: 90.9921  memory: 21685  grad_norm: 1.6588  loss: 0.0120  top1_acc: 1.0000  top5_acc: 1.0000  loss_cls: 0.0120
+08/13 18:47:33 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240813_021006
+08/13 18:47:33 - mmengine - INFO - Epoch(train) [38][14/14]  lr: 1.0000e-04  eta: 2:45:10  time: 94.8759  data_time: 94.6204  memory: 21685  grad_norm: 1.5143  loss: 0.0100  top1_acc: 1.0000  top5_acc: 1.0000  loss_cls: 0.0100
+08/13 19:10:43 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240813_021006
+08/13 19:10:43 - mmengine - INFO - Epoch(train) [39][14/14]  lr: 1.0000e-04  eta: 2:21:30  time: 101.5827  data_time: 101.3118  memory: 21685  grad_norm: 1.8452  loss: 0.0128  top1_acc: 1.0000  top5_acc: 1.0000  loss_cls: 0.0128
+08/13 19:33:23 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240813_021006
+08/13 19:33:23 - mmengine - INFO - Epoch(train) [40][14/14]  lr: 1.0000e-04  eta: 1:57:48  time: 90.7510  data_time: 90.4570  memory: 21685  grad_norm: 1.7469  loss: 0.0110  top1_acc: 1.0000  top5_acc: 1.0000  loss_cls: 0.0110
+08/13 19:33:23 - mmengine - INFO - Saving checkpoint at 40 epochs
+[19:45:19] /github/workspace/src/video/video_reader.cc:737: [BytesIO]You have received more than 12 frames corrupted and recovered from nearest frames. Set environment variable `DECORD_DUPLICATE_WARNING_THRESHOLD=1.0`if you want to disable this warning.
+08/13 19:47:44 - mmengine - INFO - Epoch(val) [40][7/7]    acc/top1: 0.9677  acc/top5: 1.0000  acc/mean1: 0.9610  data_time: 107.2505  time: 107.3673
+08/13 20:15:07 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240813_021006
+08/13 20:15:07 - mmengine - INFO - Epoch(train) [41][14/14]  lr: 1.0000e-05  eta: 1:34:37  time: 111.1539  data_time: 110.8769  memory: 21685  grad_norm: 2.1044  loss: 0.0171  top1_acc: 1.0000  top5_acc: 1.0000  loss_cls: 0.0171
+08/13 20:38:38 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240813_021006
+08/13 20:38:38 - mmengine - INFO - Epoch(train) [42][14/14]  lr: 1.0000e-05  eta: 1:10:57  time: 103.0112  data_time: 102.7309  memory: 21685  grad_norm: 2.2334  loss: 0.0159  top1_acc: 1.0000  top5_acc: 1.0000  loss_cls: 0.0159
+08/13 21:02:53 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240813_021006
+08/13 21:02:53 - mmengine - INFO - Epoch(train) [43][14/14]  lr: 1.0000e-05  eta: 0:47:19  time: 107.1397  data_time: 106.8681  memory: 21685  grad_norm: 1.6359  loss: 0.0100  top1_acc: 1.0000  top5_acc: 1.0000  loss_cls: 0.0100
+08/13 21:26:26 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240813_021006
+08/13 21:26:26 - mmengine - INFO - Epoch(train) [44][14/14]  lr: 1.0000e-05  eta: 0:23:39  time: 94.8208  data_time: 94.5450  memory: 21685  grad_norm: 1.5241  loss: 0.0101  top1_acc: 1.0000  top5_acc: 1.0000  loss_cls: 0.0101
+08/13 21:49:43 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240813_021006
+08/13 21:49:43 - mmengine - INFO - Epoch(train) [45][14/14]  lr: 1.0000e-05  eta: 0:00:00  time: 99.8840  data_time: 99.5895  memory: 21685  grad_norm: 1.9300  loss: 0.0178  top1_acc: 0.9859  top5_acc: 1.0000  loss_cls: 0.0178
+08/13 21:49:43 - mmengine - INFO - Saving checkpoint at 45 epochs
+[22:02:22] /github/workspace/src/video/video_reader.cc:737: [BytesIO]You have received more than 12 frames corrupted and recovered from nearest frames. Set environment variable `DECORD_DUPLICATE_WARNING_THRESHOLD=1.0`if you want to disable this warning.
+08/13 22:04:59 - mmengine - INFO - Epoch(val) [45][7/7]    acc/top1: 0.9677  acc/top5: 1.0000  acc/mean1: 0.9610  data_time: 114.1311  time: 114.2580
