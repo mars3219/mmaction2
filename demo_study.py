@@ -14,8 +14,8 @@ from mmaction.visualization import ActionVisualizer
 
 def parse_args():
     parser = argparse.ArgumentParser(description='MMAction2 demo')
-    parser.add_argument('--config', default='/workspace/demo/demo_configs/x3d_m_16x5x1_kinetic400-rgb_video_infer.py', help='test config file path')
-    parser.add_argument('--checkpoint', default='/workspace/checkpoints/x3d_m_16x5x1_facebook-kinetics400-rgb_20201027-3f42382a.pth', help='checkpoint file/url')
+    parser.add_argument('--config', default='/workspace/demo/demo_configs/mvit-large-p244_40x3x1_kinetics400-rgb_video_infer.py', help='test config file path')
+    parser.add_argument('--checkpoint', default='/workspace/checkpoints/mvit-large-p244_40x3x1_kinetics400-rgb_20221021-11fe1f97.pth', help='checkpoint file/url')
     # parser.add_argument('--config', default='/workspace/demo/demo_configs/tsn_r50_1x1x8_video_infer.py', help='test config file path')
     # parser.add_argument('--checkpoint', default='/workspace/checkpoints/tsn_imagenet-pretrained-r50_8xb32-1x1x8-100e_kinetics400-rgb_20220906-2692d16c.pth', help='checkpoint file/url')
     parser.add_argument('--video', default='sample_video/output_cropped_video.mp4', help='video file/url or rawframes directory')
