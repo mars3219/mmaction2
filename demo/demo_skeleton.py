@@ -28,8 +28,10 @@ LINETYPE = 1
 
 def parse_args():
     parser = argparse.ArgumentParser(description='MMAction2 demo')
-    parser.add_argument('--video', default='/workspace/demo/demo_skeleton.mp4', help='video file/url')
+    parser.add_argument('--video', default='sample_video/output_cropped_video.mp4', help='video file/url')
     parser.add_argument('--out_filename', default='/workspace/output/skeleton_demo.mp4', help='output filename')
+    # parser.add_argument('--video', default='/workspace/demo/demo_skeleton.mp4', help='video file/url')
+    # parser.add_argument('--out_filename', default='/workspace/output/skeleton_demo.mp4', help='output filename')
 
     # posec3d 설정 및 가중치
     parser.add_argument(
@@ -39,10 +41,10 @@ def parse_args():
         help='skeleton model config file path')
     parser.add_argument(
         '--checkpoints',
-        default='/workspace/checkpoints/slowonly_r50_u48_240e_ntu60_xsub_keypoint-f3adabf1.pth',
-        # default=('https://download.openmmlab.com/mmaction/skeleton/posec3d/'
-        #          'slowonly_r50_u48_240e_ntu60_xsub_keypoint/'
-        #          'slowonly_r50_u48_240e_ntu60_xsub_keypoint-f3adabf1.pth'),
+        # default='/workspace/checkpoints/slowonly_r50_u48_240e_ntu60_xsub_keypoint-f3adabf1.pth',
+        default=('https://download.openmmlab.com/mmaction/skeleton/posec3d/'
+                 'slowonly_r50_u48_240e_ntu60_xsub_keypoint/'
+                 'slowonly_r50_u48_240e_ntu60_xsub_keypoint-f3adabf1.pth'),
         help='skeleton model checkpoints file/url')
 
     # faster rcnn 설정 및 가중치
