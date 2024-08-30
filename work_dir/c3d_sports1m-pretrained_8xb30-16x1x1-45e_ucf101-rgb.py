@@ -1,9 +1,9 @@
-ann_file_test = '/data/aihub/violence/output/custom_test.txt'
-ann_file_train = '/data/aihub/violence/output/custom_train.txt'
-ann_file_val = '/data/aihub/violence/output/custom_val.txt'
+ann_file_test = 'data/ucf101/ucf101_val_split_1_videos.txt'
+ann_file_train = 'data/ucf101/ucf101_train_split_1_videos.txt'
+ann_file_val = 'data/ucf101/ucf101_val_split_1_videos.txt'
 auto_scale_lr = dict(base_batch_size=240, enable=False)
-data_root = '/data/aihub/violence/output'
-data_root_val = '/data/aihub/violence/output'
+data_root = 'data/ucf101/videos'
+data_root_val = 'data/ucf101/videos'
 dataset_type = 'VideoDataset'
 default_hooks = dict(
     checkpoint=dict(interval=5, save_best='auto', type='CheckpointHook'),
@@ -73,15 +73,15 @@ param_scheduler = [
         ],
         type='MultiStepLR'),
 ]
-randomness = dict(deterministic=False, diff_rank_seed=False, seed=0)
+randomness = dict(deterministic=False, diff_rank_seed=False, seed=None)
 resume = False
 split = 1
 test_cfg = dict(type='TestLoop')
 test_dataloader = dict(
     batch_size=1,
     dataset=dict(
-        ann_file='/data/aihub/violence/output/custom_test.txt',
-        data_prefix=dict(video='/data/aihub/violence/output'),
+        ann_file='data/ucf101/ucf101_val_split_1_videos.txt',
+        data_prefix=dict(video='data/ucf101/videos'),
         pipeline=[
             dict(io_backend='disk', type='DecordInit'),
             dict(
@@ -125,10 +125,10 @@ test_pipeline = [
 train_cfg = dict(
     max_epochs=45, type='EpochBasedTrainLoop', val_begin=1, val_interval=5)
 train_dataloader = dict(
-    batch_size=128,
+    batch_size=30,
     dataset=dict(
-        ann_file='/data/aihub/violence/output/custom_train.txt',
-        data_prefix=dict(video='/data/aihub/violence/output'),
+        ann_file='data/ucf101/ucf101_train_split_1_videos.txt',
+        data_prefix=dict(video='data/ucf101/videos'),
         pipeline=[
             dict(io_backend='disk', type='DecordInit'),
             dict(
@@ -165,10 +165,10 @@ train_pipeline = [
 ]
 val_cfg = dict(type='ValLoop')
 val_dataloader = dict(
-    batch_size=128,
+    batch_size=30,
     dataset=dict(
-        ann_file='/data/aihub/violence/output/custom_val.txt',
-        data_prefix=dict(video='/data/aihub/violence/output'),
+        ann_file='data/ucf101/ucf101_val_split_1_videos.txt',
+        data_prefix=dict(video='data/ucf101/videos'),
         pipeline=[
             dict(io_backend='disk', type='DecordInit'),
             dict(
@@ -216,4 +216,4 @@ visualizer = dict(
     type='ActionVisualizer', vis_backends=[
         dict(type='LocalVisBackend'),
     ])
-work_dir = './work_dirs/custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb'
+work_dir = '/workspace/work_dir'

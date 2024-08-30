@@ -5,6 +5,9 @@
 		},
 		{
 			"path": "../mmaction2"
+		},
+		{
+			"path": "../data"
 		}
 	],
 	"settings": {}
