@@ -73,7 +73,7 @@ param_scheduler = [
         ],
         type='MultiStepLR'),
 ]
-randomness = dict(deterministic=False, diff_rank_seed=False, seed=0)
+randomness = dict(deterministic=False, diff_rank_seed=False, seed=None)
 resume = False
 split = 1
 test_cfg = dict(type='TestLoop')

@@ -1,16 +1,35 @@
 # Copyright (c) OpenMMLab. All rights reserved.
-import abc
+import cv2
+import logging
+from datetime import datetime
 import argparse
-import os
 import os.path as osp
 from collections import defaultdict
 from tempfile import TemporaryDirectory
-from multiprocessing import Pool, set_start_method
+
 import mmengine
 import numpy as np
+
 from mmaction.apis import detection_inference, pose_inference
 from mmaction.utils import frame_extract
 
+
+
+# args = abc.abstractproperty()
+class Args:
+    def __init__(self):
+        self.det_config = '/workspace/demo/demo_configs/faster-rcnn_r50-caffe_fpn_ms-1x_coco-person.py'  # noqa: E501
+        self.det_checkpoint = '/workspace/tools/data/skeleton/faster_rcnn_r50_fpn_1x_coco-person_20201216_175929-d022e227.pth'  # noqa: E501
+        self.det_score_thr = 0.5
+        self.pose_config = '/workspace/demo/demo_configs/td-hm_hrnet-w32_8xb64-210e_coco-256x192_infer.py'  # noqa: E501
+        self.pose_checkpoint = '/workspace/tools/data/skeleton/hrnet_w32_coco_256x192-c78dce93_20200708.pth'  # noqa: E501
+
+args = Args()
+
+def setup_logging(log_file):
+    logging.basicConfig(filename=log_file,
+                        level=logging.ERROR,
+                        format='%(asctime)s - %(levelname)s - %(message)s')
 
 def intersection(b0, b1):
     l, r = max(b0[0], b1[0]), min(b0[2], b1[2])
@@ -246,8 +265,17 @@ def pose_inference_with_align(args, frame_paths, det_results):
 
     return keypoints, scores
 
+def get_video_shape(video_path):
+    # 비디오 파일에서 프레임 크기 추출
+    cap = cv2.VideoCapture(video_path)
+    if not cap.isOpened():
+        raise ValueError(f"Unable to open video file {video_path}")
+    width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    cap.release()
+    return (height, width)
 
-def ntu_pose_extraction(vid, args):
+def ntu_pose_extraction(vid, label, skip_postproc=False):
     tmp_dir = TemporaryDirectory()
     frame_paths, _ = frame_extract(vid, out_dir=tmp_dir.name)
     det_results, _ = detection_inference(
@@ -258,7 +286,7 @@ def ntu_pose_extraction(vid, args):
         device=args.device,
         with_score=True)
 
-    if not args.skip_postproc:
+    if not skip_postproc:
         det_results = ntu_det_postproc(vid, det_results)
 
     anno = dict()
@@ -268,60 +296,66 @@ def ntu_pose_extraction(vid, args):
     anno['keypoint'] = keypoints
     anno['keypoint_score'] = scores
     anno['frame_dir'] = osp.splitext(osp.basename(vid))[0]
-    anno['img_shape'] = (1080, 1920)
-    anno['original_shape'] = (1080, 1920)
+    anno['img_shape'] = get_video_shape(vid)
+    anno['original_shape'] = anno['img_shape']
     anno['total_frames'] = keypoints.shape[1]
-    # if 
-    # anno['label']
-    # anno['label'] = int(osp.basename(vid).split('A')[1][:3]) - 1
+    anno['label'] = label
     tmp_dir.cleanup()
 
     return anno
 
 
-def process_video(video_file, args):
-    print(f'Processing {video_file}')
-    anno = ntu_pose_extraction(video_file, args)
-    output_file = osp.join(args.output_folder, f'{osp.splitext(osp.basename(video_file))[0]}.pkl')
-    mmengine.dump(anno, output_file)
-    print(f'Saved annotation to {output_file}')
-
-def process_folder(args):
-    video_folder, output_folder, num_workers = args.video_folder, args.output_folder, args.num_workers
-    if not osp.exists(output_folder):
-        os.makedirs(output_folder)
-
-    # mp4, avi 파일 필터링
-    video_files = [
-        osp.join(root, f) for root, _, files in os.walk(video_folder)
-        for f in files if f.endswith('.mp4') or f.endswith('.avi')
-    ]
-
-    # 병렬처리
-    with Pool(num_workers) as pool:
-        pool.starmap(process_video, [(video_file, args) for video_file in video_files], chunksize=1)
-
 def parse_args():
     parser = argparse.ArgumentParser(
-        description='Generate Pose Annotations for videos in a folder')
-    parser.add_argument('--det_config', type=str, default='/workspace/demo/demo_configs/faster-rcnn_r50-caffe_fpn_ms-1x_coco-person.py')
-    parser.add_argument('--det_checkpoint', type=str, default='/workspace/tools/data/skeleton/faster_rcnn_r50_fpn_1x_coco-person_20201216_175929-d022e227.pth')
-    parser.add_argument('--pose_config', type=str, default='/workspace/demo/demo_configs/td-hm_hrnet-w32_8xb64-210e_coco-256x192_infer.py')
-    parser.add_argument('--pose_checkpoint', type=str, default='/workspace/tools/data/skeleton/hrnet_w32_coco_256x192-c78dce93_20200708.pth')
-    parser.add_argument('--det_score_thr', type=float, default=0.5)
-    
-
-    parser.add_argument('--video-folder', default="/data/test", type=str, help='source video folder')
-    parser.add_argument('--output-folder', default="/data/aihub/violence/pkl", type=str, help='output folder for pkl files')
+        description='Generate Pose Annotation for a single NTURGB-D video')
+    parser.add_argument('--video', default="/data/test/violence/fight/Fighting002_x264.mp4", type=str, help='source video')
+    parser.add_argument('--txt-file', default='/data/aihub/violence/output/custom_train.txt', type=str, help='path to txt file containing video paths')
+    parser.add_argument('--output', default="/data/aihub/violence/train_pkl", type=str, help='output pickle name')
     parser.add_argument('--device', type=str, default='cuda:0')
-    parser.add_argument('--num-workers', type=int, default=10, help='number of workers for parallel processing')
     parser.add_argument('--skip-postproc', action='store_false')
     args = parser.parse_args()
     return args
 
+def main():
+    global_args = parse_args()
+    args.device = global_args.device
+    args.output = global_args.output
+    args.skip_postproc = global_args.skip_postproc
+
+    # 로그 파일 설정
+    log_file = osp.join(osp.dirname(global_args.output), 'error_log.txt')
+    setup_logging(log_file)
+
+    # 텍스트 파일에서 비디오 경로 읽기
+    with open(global_args.txt_file, 'r') as f:
+        lines = f.readlines()
+
+    # 각 비디오 경로에 대해 포즈 추출 및 pkl 파일 저장
+    for line in lines:
+        line_parts = line.split()
+        video_path = line_parts[0]  # 비디오 경로 추출
+        label = int(line_parts[1])  # 레이블
+        print(f'Processing video: {video_path} with label: {label}')
+
+        pkl_name = osp.splitext(osp.basename(video_path))[0] + ".pkl"
+        pkl_path = osp.join(global_args.output, pkl_name)
+        
+        # 비디오 파일이 존재하는지 확인
+        if not osp.exists(video_path):
+            print(f"Video file {video_path} does not exist. Skipping.")
+            continue
+        
+        try:
+            # 포즈 추출
+            anno = ntu_pose_extraction(video_path, label, args.skip_postproc)
+            
+            mmengine.dump(anno, pkl_path)
+            print(f'Saved annotation to {args.output}')
+        
+        except Exception as e:
+            # 오류 로그 파일에 기록
+            logging.error(f'Error processing {video_path}: {e}')
+            print(f'Error processing {video_path}: {e}. Check the log file for details.')
 
 if __name__ == '__main__':
-    set_start_method('spawn', force=True)
-    args = parse_args()
-
-    process_folder(args)
+    main()

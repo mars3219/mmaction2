@@ -7,14 +7,16 @@ right_kp = [2, 4, 6, 8, 10, 12, 14, 16]
 
 # dataset settings
 test_pipeline = [
-    dict(type='DecompressPose', squeeze=True),
     dict(
         type='UniformSampleFrames', clip_len=48, num_clips=10, test_mode=True),
     dict(type='PoseDecode'),
     dict(type='PoseCompact', hw_ratio=1., allow_imgpad=True),
-    dict(type='Resize', scale=(64, 64), keep_ratio=False),
+    dict(type='Resize', scale=(-1, 64)),
+    dict(type='CenterCrop', crop_size=64),
     dict(
         type='GeneratePoseTarget',
+        sigma=0.6,
+        use_score=True,
         with_kp=True,
         with_limb=False,
         double=True,

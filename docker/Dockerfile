@@ -21,7 +21,7 @@ RUN pip install openmim==0.3.9 moviepy==1.0.3
 RUN mim install mmengine==0.10.4 mmdet==3.2.0 mmpose==1.3.2
 # 컨테이너 생성 시 mmcv 2.1.0 버전이 설치되어 있는 상태
 # mmcv의 nms 부분에서 cuda:0 인식이 실패함
-# 컨테이너 내부에서 pip install mmcv-full=1.7.2를 설치하면 해당오류가 사라짐
+# 컨테이너 내부에서 pip install mmcv-full==1.7.2를 설치하면 해당오류가 사라짐
 # 도커파일에 mmcv-full==1.7.2 입력하여 이미지 생성을 할 경우 컨테이너 생서 시 설치는 확인되지만, 오류가 동일하게 발생함
 
 # Install MMAction2

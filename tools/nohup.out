@@ -1,0 +1,480 @@
+09/09 07:38:32 - mmengine - INFO - 
+------------------------------------------------------------
+System environment:
+    sys.platform: linux
+    Python: 3.10.14 (main, May  6 2024, 19:42:50) [GCC 11.2.0]
+    CUDA available: True
+    MUSA available: False
+    numpy_random_seed: 1615199236
+    GPU 0: NVIDIA H100 80GB HBM3
+    CUDA_HOME: /usr/local/cuda
+    NVCC: Cuda compilation tools, release 12.1, V12.1.105
+    GCC: gcc (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0
+    PyTorch: 2.3.1
+    PyTorch compiling details: PyTorch built with:
+  - GCC 9.3
+  - C++ Version: 201703
+  - Intel(R) oneAPI Math Kernel Library Version 2023.1-Product Build 20230303 for Intel(R) 64 architecture applications
+  - Intel(R) MKL-DNN v3.3.6 (Git Hash 86e6af5974177e513fd3fee58425e1063e7f1361)
+  - OpenMP 201511 (a.k.a. OpenMP 4.5)
+  - LAPACK is enabled (usually provided by MKL)
+  - NNPACK is enabled
+  - CPU capability usage: AVX512
+  - CUDA Runtime 12.1
+  - NVCC architecture flags: -gencode;arch=compute_50,code=sm_50;-gencode;arch=compute_60,code=sm_60;-gencode;arch=compute_61,code=sm_61;-gencode;arch=compute_70,code=sm_70;-gencode;arch=compute_75,code=sm_75;-gencode;arch=compute_80,code=sm_80;-gencode;arch=compute_86,code=sm_86;-gencode;arch=compute_90,code=sm_90
+  - CuDNN 8.9.2
+  - Magma 2.6.1
+  - Build settings: BLAS_INFO=mkl, BUILD_TYPE=Release, CUDA_VERSION=12.1, CUDNN_VERSION=8.9.2, CXX_COMPILER=/opt/rh/devtoolset-9/root/usr/bin/c++, CXX_FLAGS= -D_GLIBCXX_USE_CXX11_ABI=0 -fabi-version=11 -fvisibility-inlines-hidden -DUSE_PTHREADPOOL -DNDEBUG -DUSE_KINETO -DLIBKINETO_NOROCTRACER -DUSE_FBGEMM -DUSE_QNNPACK -DUSE_PYTORCH_QNNPACK -DUSE_XNNPACK -DSYMBOLICATE_MOBILE_DEBUG_HANDLE -O2 -fPIC -Wall -Wextra -Werror=return-type -Werror=non-virtual-dtor -Werror=bool-operation -Wnarrowing -Wno-missing-field-initializers -Wno-type-limits -Wno-array-bounds -Wno-unknown-pragmas -Wno-unused-parameter -Wno-unused-function -Wno-unused-result -Wno-strict-overflow -Wno-strict-aliasing -Wno-stringop-overflow -Wsuggest-override -Wno-psabi -Wno-error=pedantic -Wno-error=old-style-cast -Wno-missing-braces -fdiagnostics-color=always -faligned-new -Wno-unused-but-set-variable -Wno-maybe-uninitialized -fno-math-errno -fno-trapping-math -Werror=format -Wno-stringop-overflow, LAPACK_INFO=mkl, PERF_WITH_AVX=1, PERF_WITH_AVX2=1, PERF_WITH_AVX512=1, TORCH_VERSION=2.3.1, USE_CUDA=ON, USE_CUDNN=ON, USE_CUSPARSELT=1, USE_EXCEPTION_PTR=1, USE_GFLAGS=OFF, USE_GLOG=OFF, USE_GLOO=ON, USE_MKL=ON, USE_MKLDNN=ON, USE_MPI=OFF, USE_NCCL=ON, USE_NNPACK=ON, USE_OPENMP=ON, USE_ROCM=OFF, USE_ROCM_KERNEL_ASSERT=OFF, 
+
+    TorchVision: 0.18.1
+    OpenCV: 4.10.0
+    MMEngine: 0.10.4
+
+Runtime environment:
+    cudnn_benchmark: False
+    mp_cfg: {'mp_start_method': 'fork', 'opencv_num_threads': 0}
+    dist_cfg: {'backend': 'nccl'}
+    seed: 1615199236
+    diff_rank_seed: False
+    deterministic: False
+    Distributed launcher: none
+    Distributed training: False
+    GPU number: 1
+------------------------------------------------------------
+
+09/09 07:38:33 - mmengine - INFO - Config:
+ann_file_test = '/data/aihub/violence/output/custom_test.txt'
+ann_file_train = '/data/aihub/violence/output/custom_train.txt'
+ann_file_val = '/data/aihub/violence/output/custom_val.txt'
+auto_scale_lr = dict(base_batch_size=240, enable=False)
+data_root = '/data/aihub/violence/output'
+data_root_val = '/data/aihub/violence/output'
+dataset_type = 'VideoDataset'
+default_hooks = dict(
+    checkpoint=dict(interval=5, save_best='auto', type='CheckpointHook'),
+    logger=dict(ignore_last=False, interval=20, type='LoggerHook'),
+    param_scheduler=dict(type='ParamSchedulerHook'),
+    runtime_info=dict(type='RuntimeInfoHook'),
+    sampler_seed=dict(type='DistSamplerSeedHook'),
+    sync_buffers=dict(type='SyncBuffersHook'),
+    timer=dict(type='IterTimerHook'))
+default_scope = 'mmaction'
+env_cfg = dict(
+    cudnn_benchmark=False,
+    dist_cfg=dict(backend='nccl'),
+    mp_cfg=dict(mp_start_method='fork', opencv_num_threads=0))
+file_client_args = dict(io_backend='disk')
+launcher = 'none'
+load_from = None
+log_level = 'INFO'
+log_processor = dict(by_epoch=True, type='LogProcessor', window_size=20)
+model = dict(
+    backbone=dict(
+        act_cfg=dict(type='ReLU'),
+        conv_cfg=dict(type='Conv3d'),
+        dropout_ratio=0.5,
+        init_std=0.005,
+        norm_cfg=None,
+        pretrained=
+        'https://download.openmmlab.com/mmaction/recognition/c3d/c3d_sports1m_pretrain_20201016-dcc47ddc.pth',
+        style='pytorch',
+        type='C3D'),
+    cls_head=dict(
+        average_clips='prob',
+        dropout_ratio=0.5,
+        in_channels=4096,
+        init_std=0.01,
+        num_classes=2,
+        spatial_type=None,
+        type='I3DHead'),
+    data_preprocessor=dict(
+        format_shape='NCTHW',
+        mean=[
+            104,
+            117,
+            128,
+        ],
+        std=[
+            1,
+            1,
+            1,
+        ],
+        type='ActionDataPreprocessor'),
+    test_cfg=None,
+    train_cfg=None,
+    type='Recognizer3D')
+optim_wrapper = dict(
+    clip_grad=dict(max_norm=40, norm_type=2),
+    optimizer=dict(lr=0.001, momentum=0.9, type='SGD', weight_decay=0.0005))
+param_scheduler = [
+    dict(
+        begin=0,
+        by_epoch=True,
+        end=45,
+        gamma=0.1,
+        milestones=[
+            20,
+            40,
+        ],
+        type='MultiStepLR'),
+]
+randomness = dict(deterministic=False, diff_rank_seed=False, seed=None)
+resume = False
+split = 1
+test_cfg = dict(type='TestLoop')
+test_dataloader = dict(
+    batch_size=1,
+    dataset=dict(
+        ann_file='/data/aihub/violence/output/custom_test.txt',
+        data_prefix=dict(video='/data/aihub/violence/output'),
+        pipeline=[
+            dict(io_backend='disk', type='DecordInit'),
+            dict(
+                clip_len=16,
+                frame_interval=1,
+                num_clips=10,
+                test_mode=True,
+                type='SampleFrames'),
+            dict(type='DecordDecode'),
+            dict(scale=(
+                -1,
+                128,
+            ), type='Resize'),
+            dict(crop_size=112, type='CenterCrop'),
+            dict(input_format='NCTHW', type='FormatShape'),
+            dict(type='PackActionInputs'),
+        ],
+        test_mode=True,
+        type='VideoDataset'),
+    num_workers=8,
+    persistent_workers=True,
+    sampler=dict(shuffle=False, type='DefaultSampler'))
+test_evaluator = dict(type='AccMetric')
+test_pipeline = [
+    dict(io_backend='disk', type='DecordInit'),
+    dict(
+        clip_len=16,
+        frame_interval=1,
+        num_clips=10,
+        test_mode=True,
+        type='SampleFrames'),
+    dict(type='DecordDecode'),
+    dict(scale=(
+        -1,
+        128,
+    ), type='Resize'),
+    dict(crop_size=112, type='CenterCrop'),
+    dict(input_format='NCTHW', type='FormatShape'),
+    dict(type='PackActionInputs'),
+]
+train_cfg = dict(
+    max_epochs=45, type='EpochBasedTrainLoop', val_begin=1, val_interval=5)
+train_dataloader = dict(
+    batch_size=128,
+    dataset=dict(
+        ann_file='/data/aihub/violence/output/custom_train.txt',
+        data_prefix=dict(video='/data/aihub/violence/output'),
+        pipeline=[
+            dict(io_backend='disk', type='DecordInit'),
+            dict(
+                clip_len=16,
+                frame_interval=1,
+                num_clips=1,
+                type='SampleFrames'),
+            dict(type='DecordDecode'),
+            dict(scale=(
+                -1,
+                128,
+            ), type='Resize'),
+            dict(size=112, type='RandomCrop'),
+            dict(flip_ratio=0.5, type='Flip'),
+            dict(input_format='NCTHW', type='FormatShape'),
+            dict(type='PackActionInputs'),
+        ],
+        type='VideoDataset'),
+    num_workers=8,
+    persistent_workers=True,
+    sampler=dict(shuffle=True, type='DefaultSampler'))
+train_pipeline = [
+    dict(io_backend='disk', type='DecordInit'),
+    dict(clip_len=16, frame_interval=1, num_clips=1, type='SampleFrames'),
+    dict(type='DecordDecode'),
+    dict(scale=(
+        -1,
+        128,
+    ), type='Resize'),
+    dict(size=112, type='RandomCrop'),
+    dict(flip_ratio=0.5, type='Flip'),
+    dict(input_format='NCTHW', type='FormatShape'),
+    dict(type='PackActionInputs'),
+]
+val_cfg = dict(type='ValLoop')
+val_dataloader = dict(
+    batch_size=128,
+    dataset=dict(
+        ann_file='/data/aihub/violence/output/custom_val.txt',
+        data_prefix=dict(video='/data/aihub/violence/output'),
+        pipeline=[
+            dict(io_backend='disk', type='DecordInit'),
+            dict(
+                clip_len=16,
+                frame_interval=1,
+                num_clips=1,
+                test_mode=True,
+                type='SampleFrames'),
+            dict(type='DecordDecode'),
+            dict(scale=(
+                -1,
+                128,
+            ), type='Resize'),
+            dict(crop_size=112, type='CenterCrop'),
+            dict(input_format='NCTHW', type='FormatShape'),
+            dict(type='PackActionInputs'),
+        ],
+        test_mode=True,
+        type='VideoDataset'),
+    num_workers=8,
+    persistent_workers=True,
+    sampler=dict(shuffle=False, type='DefaultSampler'))
+val_evaluator = dict(type='AccMetric')
+val_pipeline = [
+    dict(io_backend='disk', type='DecordInit'),
+    dict(
+        clip_len=16,
+        frame_interval=1,
+        num_clips=1,
+        test_mode=True,
+        type='SampleFrames'),
+    dict(type='DecordDecode'),
+    dict(scale=(
+        -1,
+        128,
+    ), type='Resize'),
+    dict(crop_size=112, type='CenterCrop'),
+    dict(input_format='NCTHW', type='FormatShape'),
+    dict(type='PackActionInputs'),
+]
+vis_backends = [
+    dict(type='LocalVisBackend'),
+]
+visualizer = dict(
+    type='ActionVisualizer', vis_backends=[
+        dict(type='LocalVisBackend'),
+    ])
+work_dir = '/workspace/work_dir'
+
+09/09 07:38:35 - mmengine - INFO - Distributed training is not used, all SyncBatchNorm (SyncBN) layers in the model will be automatically reverted to BatchNormXd layers if they are used.
+09/09 07:38:35 - mmengine - INFO - Hooks will be executed in the following order:
+before_run:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(BELOW_NORMAL) LoggerHook                         
+ -------------------- 
+before_train:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+(VERY_LOW    ) CheckpointHook                     
+ -------------------- 
+before_train_epoch:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+(NORMAL      ) DistSamplerSeedHook                
+ -------------------- 
+before_train_iter:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+ -------------------- 
+after_train_iter:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+(BELOW_NORMAL) LoggerHook                         
+(LOW         ) ParamSchedulerHook                 
+(VERY_LOW    ) CheckpointHook                     
+ -------------------- 
+after_train_epoch:
+(NORMAL      ) IterTimerHook                      
+(NORMAL      ) SyncBuffersHook                    
+(LOW         ) ParamSchedulerHook                 
+(VERY_LOW    ) CheckpointHook                     
+ -------------------- 
+before_val:
+(VERY_HIGH   ) RuntimeInfoHook                    
+ -------------------- 
+before_val_epoch:
+(NORMAL      ) IterTimerHook                      
+(NORMAL      ) SyncBuffersHook                    
+ -------------------- 
+before_val_iter:
+(NORMAL      ) IterTimerHook                      
+ -------------------- 
+after_val_iter:
+(NORMAL      ) IterTimerHook                      
+(BELOW_NORMAL) LoggerHook                         
+ -------------------- 
+after_val_epoch:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+(BELOW_NORMAL) LoggerHook                         
+(LOW         ) ParamSchedulerHook                 
+(VERY_LOW    ) CheckpointHook                     
+ -------------------- 
+after_val:
+(VERY_HIGH   ) RuntimeInfoHook                    
+ -------------------- 
+after_train:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(VERY_LOW    ) CheckpointHook                     
+ -------------------- 
+before_test:
+(VERY_HIGH   ) RuntimeInfoHook                    
+ -------------------- 
+before_test_epoch:
+(NORMAL      ) IterTimerHook                      
+ -------------------- 
+before_test_iter:
+(NORMAL      ) IterTimerHook                      
+ -------------------- 
+after_test_iter:
+(NORMAL      ) IterTimerHook                      
+(BELOW_NORMAL) LoggerHook                         
+ -------------------- 
+after_test_epoch:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+(BELOW_NORMAL) LoggerHook                         
+ -------------------- 
+after_test:
+(VERY_HIGH   ) RuntimeInfoHook                    
+ -------------------- 
+after_run:
+(BELOW_NORMAL) LoggerHook                         
+ -------------------- 
+09/09 07:38:37 - mmengine - INFO - load model from: https://download.openmmlab.com/mmaction/recognition/c3d/c3d_sports1m_pretrain_20201016-dcc47ddc.pth
+09/09 07:38:37 - mmengine - INFO - Loads checkpoint by http backend from path: https://download.openmmlab.com/mmaction/recognition/c3d/c3d_sports1m_pretrain_20201016-dcc47ddc.pth
+Downloading: "https://download.openmmlab.com/mmaction/recognition/c3d/c3d_sports1m_pretrain_20201016-dcc47ddc.pth" to /root/.cache/torch/hub/checkpoints/c3d_sports1m_pretrain_20201016-dcc47ddc.pth
+09/09 07:38:48 - mmengine - WARNING - "FileClient" will be deprecated in future. Please use io functions in https://mmengine.readthedocs.io/en/latest/api/fileio.html#file-io
+09/09 07:38:48 - mmengine - WARNING - "HardDiskBackend" is the alias of "LocalBackend" and the former will be deprecated in future.
+09/09 07:38:48 - mmengine - INFO - Checkpoints will be saved to /workspace/work_dir.
+09/09 08:07:53 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240909_073831
+09/09 08:07:53 - mmengine - INFO - Epoch(train)  [1][14/14]  lr: 1.0000e-03  eta: 21:19:31  time: 124.6298  data_time: 124.2994  memory: 21685  grad_norm: 9.1485  loss: 0.4117  top1_acc: 0.8592  top5_acc: 1.0000  loss_cls: 0.4117
+09/09 08:35:31 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240909_073831
+09/09 08:35:31 - mmengine - INFO - Epoch(train)  [2][14/14]  lr: 1.0000e-03  eta: 20:19:14  time: 111.1978  data_time: 110.9268  memory: 21685  grad_norm: 5.8814  loss: 0.2100  top1_acc: 0.9859  top5_acc: 1.0000  loss_cls: 0.2100
+09/09 08:59:59 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240909_073831
+09/09 08:59:59 - mmengine - INFO - Epoch(train)  [3][14/14]  lr: 1.0000e-03  eta: 18:56:26  time: 110.5578  data_time: 110.2722  memory: 21685  grad_norm: 3.9061  loss: 0.1273  top1_acc: 0.9859  top5_acc: 1.0000  loss_cls: 0.1273
+09/09 09:21:35 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240909_073831
+09/09 09:21:35 - mmengine - INFO - Epoch(train)  [4][14/14]  lr: 1.0000e-03  eta: 17:33:26  time: 91.3911  data_time: 91.1096  memory: 21685  grad_norm: 4.1486  loss: 0.1063  top1_acc: 0.9718  top5_acc: 1.0000  loss_cls: 0.1063
+09/09 09:42:09 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240909_073831
+09/09 09:42:09 - mmengine - INFO - Epoch(train)  [5][14/14]  lr: 1.0000e-03  eta: 16:26:47  time: 90.8863  data_time: 90.6247  memory: 21685  grad_norm: 3.8847  loss: 0.0839  top1_acc: 0.9437  top5_acc: 1.0000  loss_cls: 0.0839
+09/09 09:42:09 - mmengine - INFO - Saving checkpoint at 5 epochs
+[09:54:20] /github/workspace/src/video/video_reader.cc:737: [BytesIO]You have received more than 12 frames corrupted and recovered from nearest frames. Set environment variable `DECORD_DUPLICATE_WARNING_THRESHOLD=1.0`if you want to disable this warning.
+09/09 09:57:36 - mmengine - INFO - Epoch(val) [5][7/7]    acc/top1: 0.9619  acc/top5: 1.0000  acc/mean1: 0.9544  data_time: 131.9318  time: 132.0944
+09/09 09:57:37 - mmengine - INFO - The best checkpoint with 0.9619 acc/top1 at 5 epoch is saved to best_acc_top1_epoch_5.pth.
+09/09 10:29:30 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240909_073831
+09/09 10:29:30 - mmengine - INFO - Epoch(train)  [6][14/14]  lr: 1.0000e-03  eta: 16:48:34  time: 113.5511  data_time: 113.2891  memory: 21685  grad_norm: 3.7036  loss: 0.0786  top1_acc: 0.9859  top5_acc: 1.0000  loss_cls: 0.0786
+09/09 10:52:07 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240909_073831
+09/09 10:52:07 - mmengine - INFO - Epoch(train)  [7][14/14]  lr: 1.0000e-03  eta: 16:05:06  time: 109.1731  data_time: 108.9002  memory: 21685  grad_norm: 3.3480  loss: 0.0636  top1_acc: 1.0000  top5_acc: 1.0000  loss_cls: 0.0636
+09/09 11:14:27 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240909_073831
+09/09 11:14:27 - mmengine - INFO - Epoch(train)  [8][14/14]  lr: 1.0000e-03  eta: 15:25:34  time: 94.7814  data_time: 94.5024  memory: 21685  grad_norm: 3.4327  loss: 0.0583  top1_acc: 0.9718  top5_acc: 1.0000  loss_cls: 0.0583
+09/09 11:37:18 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240909_073831
+09/09 11:37:18 - mmengine - INFO - Epoch(train)  [9][14/14]  lr: 1.0000e-03  eta: 14:51:53  time: 95.2968  data_time: 95.0132  memory: 21685  grad_norm: 3.5991  loss: 0.0510  top1_acc: 0.9718  top5_acc: 1.0000  loss_cls: 0.0510
+09/09 12:06:30 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240909_073831
+09/09 12:06:30 - mmengine - INFO - Epoch(train) [10][14/14]  lr: 1.0000e-03  eta: 14:42:35  time: 119.2182  data_time: 118.9338  memory: 21685  grad_norm: 3.8158  loss: 0.0450  top1_acc: 0.9859  top5_acc: 1.0000  loss_cls: 0.0450
+09/09 12:06:30 - mmengine - INFO - Saving checkpoint at 10 epochs
+[12:18:20] /github/workspace/src/video/video_reader.cc:737: [BytesIO]You have received more than 12 frames corrupted and recovered from nearest frames. Set environment variable `DECORD_DUPLICATE_WARNING_THRESHOLD=1.0`if you want to disable this warning.
+09/09 12:20:41 - mmengine - INFO - Epoch(val) [10][7/7]    acc/top1: 0.9608  acc/top5: 1.0000  acc/mean1: 0.9459  data_time: 106.0201  time: 106.1657
+09/09 12:46:40 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240909_073831
+09/09 12:46:40 - mmengine - INFO - Epoch(train) [11][14/14]  lr: 1.0000e-03  eta: 14:19:43  time: 110.4876  data_time: 110.1957  memory: 21685  grad_norm: 3.4815  loss: 0.0352  top1_acc: 1.0000  top5_acc: 1.0000  loss_cls: 0.0352
+09/09 13:09:46 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240909_073831
+09/09 13:09:46 - mmengine - INFO - Epoch(train) [12][14/14]  lr: 1.0000e-03  eta: 13:48:25  time: 98.3967  data_time: 98.1193  memory: 21685  grad_norm: 3.7087  loss: 0.0427  top1_acc: 0.9718  top5_acc: 1.0000  loss_cls: 0.0427
+09/09 13:31:39 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240909_073831
+09/09 13:31:39 - mmengine - INFO - Epoch(train) [13][14/14]  lr: 1.0000e-03  eta: 13:15:23  time: 94.7958  data_time: 94.5212  memory: 21685  grad_norm: 3.3125  loss: 0.0398  top1_acc: 0.9859  top5_acc: 1.0000  loss_cls: 0.0398
+09/09 13:54:32 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240909_073831
+09/09 13:54:32 - mmengine - INFO - Epoch(train) [14][14/14]  lr: 1.0000e-03  eta: 12:46:11  time: 89.9468  data_time: 89.6573  memory: 21685  grad_norm: 3.1584  loss: 0.0329  top1_acc: 0.9859  top5_acc: 1.0000  loss_cls: 0.0329
+09/09 14:16:48 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240909_073831
+09/09 14:16:48 - mmengine - INFO - Epoch(train) [15][14/14]  lr: 1.0000e-03  eta: 12:16:34  time: 98.3186  data_time: 98.0480  memory: 21685  grad_norm: 2.9902  loss: 0.0271  top1_acc: 1.0000  top5_acc: 1.0000  loss_cls: 0.0271
+09/09 14:16:48 - mmengine - INFO - Saving checkpoint at 15 epochs
+[14:28:59] /github/workspace/src/video/video_reader.cc:737: [BytesIO]You have received more than 12 frames corrupted and recovered from nearest frames. Set environment variable `DECORD_DUPLICATE_WARNING_THRESHOLD=1.0`if you want to disable this warning.
+09/09 14:31:28 - mmengine - INFO - Epoch(val) [15][7/7]    acc/top1: 0.9642  acc/top5: 1.0000  acc/mean1: 0.9560  data_time: 109.6585  time: 109.7778
+09/09 14:31:28 - mmengine - INFO - The previous best checkpoint /workspace/work_dir/best_acc_top1_epoch_5.pth is removed
+09/09 14:31:29 - mmengine - INFO - The best checkpoint with 0.9642 acc/top1 at 15 epoch is saved to best_acc_top1_epoch_15.pth.
+09/09 14:58:44 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240909_073831
+09/09 14:58:44 - mmengine - INFO - Epoch(train) [16][14/14]  lr: 1.0000e-03  eta: 11:56:47  time: 110.9538  data_time: 110.6720  memory: 21685  grad_norm: 2.2979  loss: 0.0209  top1_acc: 1.0000  top5_acc: 1.0000  loss_cls: 0.0209
+09/09 15:23:24 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240909_073831
+09/09 15:23:24 - mmengine - INFO - Epoch(train) [17][14/14]  lr: 1.0000e-03  eta: 11:31:58  time: 101.3712  data_time: 101.1118  memory: 21685  grad_norm: 2.2751  loss: 0.0187  top1_acc: 0.9859  top5_acc: 1.0000  loss_cls: 0.0187
+09/09 15:50:20 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240909_073831
+09/09 15:50:20 - mmengine - INFO - Epoch(train) [18][14/14]  lr: 1.0000e-03  eta: 11:10:36  time: 116.7321  data_time: 116.4533  memory: 21685  grad_norm: 2.6761  loss: 0.0186  top1_acc: 1.0000  top5_acc: 1.0000  loss_cls: 0.0186
+09/09 16:13:30 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240909_073831
+09/09 16:13:30 - mmengine - INFO - Epoch(train) [19][14/14]  lr: 1.0000e-03  eta: 10:43:28  time: 100.1646  data_time: 99.8924  memory: 21685  grad_norm: 3.1318  loss: 0.0231  top1_acc: 1.0000  top5_acc: 1.0000  loss_cls: 0.0231
+09/09 16:36:28 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240909_073831
+09/09 16:36:28 - mmengine - INFO - Epoch(train) [20][14/14]  lr: 1.0000e-03  eta: 10:16:30  time: 103.3410  data_time: 103.0839  memory: 21685  grad_norm: 2.8152  loss: 0.0237  top1_acc: 1.0000  top5_acc: 1.0000  loss_cls: 0.0237
+09/09 16:36:29 - mmengine - INFO - Saving checkpoint at 20 epochs
+[16:48:02] /github/workspace/src/video/video_reader.cc:737: [BytesIO]You have received more than 12 frames corrupted and recovered from nearest frames. Set environment variable `DECORD_DUPLICATE_WARNING_THRESHOLD=1.0`if you want to disable this warning.
+09/09 16:50:47 - mmengine - INFO - Epoch(val) [20][7/7]    acc/top1: 0.9654  acc/top5: 1.0000  acc/mean1: 0.9606  data_time: 106.9379  time: 107.0655
+09/09 16:50:47 - mmengine - INFO - The previous best checkpoint /workspace/work_dir/best_acc_top1_epoch_15.pth is removed
+09/09 16:50:48 - mmengine - INFO - The best checkpoint with 0.9654 acc/top1 at 20 epoch is saved to best_acc_top1_epoch_20.pth.
+09/09 17:18:25 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240909_073831
+09/09 17:18:25 - mmengine - INFO - Epoch(train) [21][14/14]  lr: 1.0000e-04  eta: 9:55:08  time: 111.5896  data_time: 111.3223  memory: 21685  grad_norm: 2.3708  loss: 0.0186  top1_acc: 1.0000  top5_acc: 1.0000  loss_cls: 0.0186
+09/09 17:42:45 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240909_073831
+09/09 17:42:45 - mmengine - INFO - Epoch(train) [22][14/14]  lr: 1.0000e-04  eta: 9:29:51  time: 103.5199  data_time: 103.2408  memory: 21685  grad_norm: 1.6910  loss: 0.0136  top1_acc: 0.9859  top5_acc: 1.0000  loss_cls: 0.0136
+09/09 18:05:41 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240909_073831
+09/09 18:05:41 - mmengine - INFO - Epoch(train) [23][14/14]  lr: 1.0000e-04  eta: 9:03:18  time: 94.5266  data_time: 94.2500  memory: 21685  grad_norm: 1.7193  loss: 0.0118  top1_acc: 1.0000  top5_acc: 1.0000  loss_cls: 0.0118
+09/09 18:28:52 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240909_073831
+09/09 18:28:52 - mmengine - INFO - Epoch(train) [24][14/14]  lr: 1.0000e-04  eta: 8:37:17  time: 91.7531  data_time: 91.4955  memory: 21685  grad_norm: 2.2441  loss: 0.0157  top1_acc: 0.9859  top5_acc: 1.0000  loss_cls: 0.0157
+09/09 18:53:20 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240909_073831
+09/09 18:53:20 - mmengine - INFO - Epoch(train) [25][14/14]  lr: 1.0000e-04  eta: 8:12:31  time: 100.0978  data_time: 99.8304  memory: 21685  grad_norm: 2.1147  loss: 0.0148  top1_acc: 1.0000  top5_acc: 1.0000  loss_cls: 0.0148
+09/09 18:53:20 - mmengine - INFO - Saving checkpoint at 25 epochs
+[19:05:07] /github/workspace/src/video/video_reader.cc:737: [BytesIO]You have received more than 12 frames corrupted and recovered from nearest frames. Set environment variable `DECORD_DUPLICATE_WARNING_THRESHOLD=1.0`if you want to disable this warning.
+09/09 19:07:51 - mmengine - INFO - Epoch(val) [25][7/7]    acc/top1: 0.9654  acc/top5: 1.0000  acc/mean1: 0.9555  data_time: 108.6184  time: 108.7317
+09/09 19:35:23 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240909_073831
+09/09 19:35:23 - mmengine - INFO - Epoch(train) [26][14/14]  lr: 1.0000e-04  eta: 7:50:00  time: 107.7003  data_time: 107.4334  memory: 21685  grad_norm: 2.2302  loss: 0.0130  top1_acc: 1.0000  top5_acc: 1.0000  loss_cls: 0.0130
+09/09 19:59:01 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240909_073831
+09/09 19:59:01 - mmengine - INFO - Epoch(train) [27][14/14]  lr: 1.0000e-04  eta: 7:24:32  time: 97.7366  data_time: 97.4751  memory: 21685  grad_norm: 2.6453  loss: 0.0155  top1_acc: 0.9859  top5_acc: 1.0000  loss_cls: 0.0155
+09/09 20:20:51 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240909_073831
+09/09 20:20:51 - mmengine - INFO - Epoch(train) [28][14/14]  lr: 1.0000e-04  eta: 6:58:06  time: 102.0030  data_time: 101.7246  memory: 21685  grad_norm: 2.1240  loss: 0.0147  top1_acc: 1.0000  top5_acc: 1.0000  loss_cls: 0.0147
+09/09 20:43:41 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240909_073831
+09/09 20:43:41 - mmengine - INFO - Epoch(train) [29][14/14]  lr: 1.0000e-04  eta: 6:32:32  time: 96.1356  data_time: 95.8630  memory: 21685  grad_norm: 1.7515  loss: 0.0096  top1_acc: 1.0000  top5_acc: 1.0000  loss_cls: 0.0096
+09/09 21:08:16 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240909_073831
+09/09 21:08:16 - mmengine - INFO - Epoch(train) [30][14/14]  lr: 1.0000e-04  eta: 6:08:02  time: 99.8454  data_time: 99.5719  memory: 21685  grad_norm: 2.2348  loss: 0.0115  top1_acc: 0.9859  top5_acc: 1.0000  loss_cls: 0.0115
+09/09 21:08:16 - mmengine - INFO - Saving checkpoint at 30 epochs
+[21:21:01] /github/workspace/src/video/video_reader.cc:737: [BytesIO]You have received more than 12 frames corrupted and recovered from nearest frames. Set environment variable `DECORD_DUPLICATE_WARNING_THRESHOLD=1.0`if you want to disable this warning.
+09/09 21:23:55 - mmengine - INFO - Epoch(val) [30][7/7]    acc/top1: 0.9677  acc/top5: 1.0000  acc/mean1: 0.9610  data_time: 116.9961  time: 117.1117
+09/09 21:23:55 - mmengine - INFO - The previous best checkpoint /workspace/work_dir/best_acc_top1_epoch_20.pth is removed
+09/09 21:23:56 - mmengine - INFO - The best checkpoint with 0.9677 acc/top1 at 30 epoch is saved to best_acc_top1_epoch_30.pth.
+09/09 21:51:04 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240909_073831
+09/09 21:51:04 - mmengine - INFO - Epoch(train) [31][14/14]  lr: 1.0000e-04  eta: 5:44:38  time: 119.2923  data_time: 119.0146  memory: 21685  grad_norm: 2.0179  loss: 0.0125  top1_acc: 1.0000  top5_acc: 1.0000  loss_cls: 0.0125
+09/09 22:14:34 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240909_073831
+09/09 22:14:34 - mmengine - INFO - Epoch(train) [32][14/14]  lr: 1.0000e-04  eta: 5:19:34  time: 95.1680  data_time: 94.8875  memory: 21685  grad_norm: 1.7551  loss: 0.0105  top1_acc: 1.0000  top5_acc: 1.0000  loss_cls: 0.0105
+09/09 22:36:16 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240909_073831
+09/09 22:36:16 - mmengine - INFO - Epoch(train) [33][14/14]  lr: 1.0000e-04  eta: 4:53:56  time: 93.8072  data_time: 93.5163  memory: 21685  grad_norm: 1.4699  loss: 0.0102  top1_acc: 1.0000  top5_acc: 1.0000  loss_cls: 0.0102
+09/09 23:02:40 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240909_073831
+09/09 23:02:40 - mmengine - INFO - Epoch(train) [34][14/14]  lr: 1.0000e-04  eta: 4:30:03  time: 102.9682  data_time: 102.6931  memory: 21685  grad_norm: 2.3847  loss: 0.0152  top1_acc: 0.9859  top5_acc: 1.0000  loss_cls: 0.0152
+09/09 23:25:32 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240909_073831
+09/09 23:25:32 - mmengine - INFO - Epoch(train) [35][14/14]  lr: 1.0000e-04  eta: 4:05:01  time: 100.6129  data_time: 100.3545  memory: 21685  grad_norm: 2.2896  loss: 0.0147  top1_acc: 1.0000  top5_acc: 1.0000  loss_cls: 0.0147
+09/09 23:25:32 - mmengine - INFO - Saving checkpoint at 35 epochs
+[23:36:42] /github/workspace/src/video/video_reader.cc:737: [BytesIO]You have received more than 12 frames corrupted and recovered from nearest frames. Set environment variable `DECORD_DUPLICATE_WARNING_THRESHOLD=1.0`if you want to disable this warning.
+09/09 23:39:14 - mmengine - INFO - Epoch(val) [35][7/7]    acc/top1: 0.9666  acc/top5: 1.0000  acc/mean1: 0.9589  data_time: 102.4103  time: 102.5268
+09/10 00:05:43 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240909_073831
+09/10 00:05:43 - mmengine - INFO - Epoch(train) [36][14/14]  lr: 1.0000e-04  eta: 3:41:01  time: 105.1520  data_time: 104.8667  memory: 21685  grad_norm: 1.8545  loss: 0.0120  top1_acc: 0.9859  top5_acc: 1.0000  loss_cls: 0.0120
+09/10 00:30:54 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240909_073831
+09/10 00:30:54 - mmengine - INFO - Epoch(train) [37][14/14]  lr: 1.0000e-04  eta: 3:16:35  time: 97.4066  data_time: 97.1128  memory: 21685  grad_norm: 2.3107  loss: 0.0170  top1_acc: 1.0000  top5_acc: 1.0000  loss_cls: 0.0170
+09/10 00:54:42 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240909_073831
+09/10 00:54:42 - mmengine - INFO - Epoch(train) [38][14/14]  lr: 1.0000e-04  eta: 2:51:52  time: 103.6976  data_time: 103.4361  memory: 21685  grad_norm: 1.6788  loss: 0.0103  top1_acc: 1.0000  top5_acc: 1.0000  loss_cls: 0.0103
+09/10 01:16:09 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240909_073831
+09/10 01:16:09 - mmengine - INFO - Epoch(train) [39][14/14]  lr: 1.0000e-04  eta: 2:26:50  time: 89.7623  data_time: 89.4891  memory: 21685  grad_norm: 1.7059  loss: 0.0108  top1_acc: 1.0000  top5_acc: 1.0000  loss_cls: 0.0108
+09/10 01:38:06 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240909_073831
+09/10 01:38:06 - mmengine - INFO - Epoch(train) [40][14/14]  lr: 1.0000e-04  eta: 2:02:03  time: 88.5485  data_time: 88.2608  memory: 21685  grad_norm: 1.6937  loss: 0.0096  top1_acc: 0.9859  top5_acc: 1.0000  loss_cls: 0.0096
+09/10 01:38:06 - mmengine - INFO - Saving checkpoint at 40 epochs
+[01:49:39] /github/workspace/src/video/video_reader.cc:737: [BytesIO]You have received more than 12 frames corrupted and recovered from nearest frames. Set environment variable `DECORD_DUPLICATE_WARNING_THRESHOLD=1.0`if you want to disable this warning.
+09/10 01:52:20 - mmengine - INFO - Epoch(val) [40][7/7]    acc/top1: 0.9677  acc/top5: 1.0000  acc/mean1: 0.9597  data_time: 106.3224  time: 106.4347
+09/10 02:20:40 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240909_073831
+09/10 02:20:40 - mmengine - INFO - Epoch(train) [41][14/14]  lr: 1.0000e-05  eta: 1:38:01  time: 114.1307  data_time: 113.8531  memory: 21685  grad_norm: 1.6965  loss: 0.0099  top1_acc: 1.0000  top5_acc: 1.0000  loss_cls: 0.0099
+09/10 02:46:00 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240909_073831
+09/10 02:46:00 - mmengine - INFO - Epoch(train) [42][14/14]  lr: 1.0000e-05  eta: 1:13:34  time: 107.6626  data_time: 107.3759  memory: 21685  grad_norm: 1.2320  loss: 0.0067  top1_acc: 0.9859  top5_acc: 1.0000  loss_cls: 0.0067
+09/10 03:09:30 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240909_073831
+09/10 03:09:30 - mmengine - INFO - Epoch(train) [43][14/14]  lr: 1.0000e-05  eta: 0:49:00  time: 105.8181  data_time: 105.5104  memory: 21685  grad_norm: 1.9944  loss: 0.0102  top1_acc: 1.0000  top5_acc: 1.0000  loss_cls: 0.0102
+09/10 03:31:48 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240909_073831
+09/10 03:31:48 - mmengine - INFO - Epoch(train) [44][14/14]  lr: 1.0000e-05  eta: 0:24:27  time: 94.9023  data_time: 94.6159  memory: 21685  grad_norm: 2.1920  loss: 0.0119  top1_acc: 1.0000  top5_acc: 1.0000  loss_cls: 0.0119
+09/10 03:54:50 - mmengine - INFO - Exp name: custom_c3d_sports1m-pretrained_8xb30-16x1x1-45e_ucf101-rgb_20240909_073831
+09/10 03:54:50 - mmengine - INFO - Epoch(train) [45][14/14]  lr: 1.0000e-05  eta: 0:00:00  time: 101.1539  data_time: 100.8570  memory: 21685  grad_norm: 2.0021  loss: 0.0121  top1_acc: 1.0000  top5_acc: 1.0000  loss_cls: 0.0121
+09/10 03:54:50 - mmengine - INFO - Saving checkpoint at 45 epochs
+[04:06:42] /github/workspace/src/video/video_reader.cc:737: [BytesIO]You have received more than 12 frames corrupted and recovered from nearest frames. Set environment variable `DECORD_DUPLICATE_WARNING_THRESHOLD=1.0`if you want to disable this warning.
+09/10 04:09:04 - mmengine - INFO - Epoch(val) [45][7/7]    acc/top1: 0.9677  acc/top5: 1.0000  acc/mean1: 0.9610  data_time: 106.4271  time: 106.5638

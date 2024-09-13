@@ -1,15 +1,22 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 import abc
 import argparse
-import os
 import os.path as osp
 from collections import defaultdict
 from tempfile import TemporaryDirectory
-from multiprocessing import Pool, set_start_method
+
 import mmengine
 import numpy as np
+
 from mmaction.apis import detection_inference, pose_inference
 from mmaction.utils import frame_extract
+
+args = abc.abstractproperty()
+args.det_config = '/workspace/demo/demo_configs/faster-rcnn_r50-caffe_fpn_ms-1x_coco-person.py'  # noqa: E501
+args.det_checkpoint = '/workspace/tools/data/skeleton/faster_rcnn_r50_fpn_1x_coco-person_20201216_175929-d022e227.pth'  # noqa: E501
+args.det_score_thr = 0.5
+args.pose_config = '/workspace/demo/demo_configs/td-hm_hrnet-w32_8xb64-210e_coco-256x192_infer.py'  # noqa: E501
+args.pose_checkpoint = '/workspace/tools/data/skeleton/hrnet_w32_coco_256x192-c78dce93_20200708.pth'  # noqa: E501
 
 
 def intersection(b0, b1):
@@ -247,7 +254,7 @@ def pose_inference_with_align(args, frame_paths, det_results):
     return keypoints, scores
 
 
-def ntu_pose_extraction(vid, args):
+def ntu_pose_extraction(vid, skip_postproc=False):
     tmp_dir = TemporaryDirectory()
     frame_paths, _ = frame_extract(vid, out_dir=tmp_dir.name)
     det_results, _ = detection_inference(
@@ -258,7 +265,7 @@ def ntu_pose_extraction(vid, args):
         device=args.device,
         with_score=True)
 
-    if not args.skip_postproc:
+    if not skip_postproc:
         det_results = ntu_det_postproc(vid, det_results)
 
     anno = dict()
@@ -271,57 +278,28 @@ def ntu_pose_extraction(vid, args):
     anno['img_shape'] = (1080, 1920)
     anno['original_shape'] = (1080, 1920)
     anno['total_frames'] = keypoints.shape[1]
-    # if 
-    # anno['label']
     # anno['label'] = int(osp.basename(vid).split('A')[1][:3]) - 1
     tmp_dir.cleanup()
 
     return anno
 
 
-def process_video(video_file, args):
-    print(f'Processing {video_file}')
-    anno = ntu_pose_extraction(video_file, args)
-    output_file = osp.join(args.output_folder, f'{osp.splitext(osp.basename(video_file))[0]}.pkl')
-    mmengine.dump(anno, output_file)
-    print(f'Saved annotation to {output_file}')
-
-def process_folder(args):
-    video_folder, output_folder, num_workers = args.video_folder, args.output_folder, args.num_workers
-    if not osp.exists(output_folder):
-        os.makedirs(output_folder)
-
-    # mp4, avi 파일 필터링
-    video_files = [
-        osp.join(root, f) for root, _, files in os.walk(video_folder)
-        for f in files if f.endswith('.mp4') or f.endswith('.avi')
-    ]
-
-    # 병렬처리
-    with Pool(num_workers) as pool:
-        pool.starmap(process_video, [(video_file, args) for video_file in video_files], chunksize=1)
-
 def parse_args():
     parser = argparse.ArgumentParser(
-        description='Generate Pose Annotations for videos in a folder')
-    parser.add_argument('--det_config', type=str, default='/workspace/demo/demo_configs/faster-rcnn_r50-caffe_fpn_ms-1x_coco-person.py')
-    parser.add_argument('--det_checkpoint', type=str, default='/workspace/tools/data/skeleton/faster_rcnn_r50_fpn_1x_coco-person_20201216_175929-d022e227.pth')
-    parser.add_argument('--pose_config', type=str, default='/workspace/demo/demo_configs/td-hm_hrnet-w32_8xb64-210e_coco-256x192_infer.py')
-    parser.add_argument('--pose_checkpoint', type=str, default='/workspace/tools/data/skeleton/hrnet_w32_coco_256x192-c78dce93_20200708.pth')
-    parser.add_argument('--det_score_thr', type=float, default=0.5)
-    
-
-    parser.add_argument('--video-folder', default="/data/test", type=str, help='source video folder')
-    parser.add_argument('--output-folder', default="/data/aihub/violence/pkl", type=str, help='output folder for pkl files')
+        description='Generate Pose Annotation for a single NTURGB-D video')
+    parser.add_argument('--video', default="/data/test/violence/fight/Fighting002_x264.mp4", type=str, help='source video')
+    parser.add_argument('--output', default="/data/aihub/violence/pkl", type=str, help='output pickle name')
     parser.add_argument('--device', type=str, default='cuda:0')
-    parser.add_argument('--num-workers', type=int, default=10, help='number of workers for parallel processing')
     parser.add_argument('--skip-postproc', action='store_false')
     args = parser.parse_args()
     return args
 
 
 if __name__ == '__main__':
-    set_start_method('spawn', force=True)
-    args = parse_args()
-
-    process_folder(args)
+    global_args = parse_args()
+    args.device = global_args.device
+    args.video = global_args.video
+    args.output = global_args.output
+    args.skip_postproc = global_args.skip_postproc
+    anno = ntu_pose_extraction(args.video, args.skip_postproc)
+    mmengine.dump(anno, args.output)

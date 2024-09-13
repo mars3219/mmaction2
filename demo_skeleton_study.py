@@ -28,17 +28,19 @@ LINETYPE = 1
 
 def parse_args():
     parser = argparse.ArgumentParser(description='MMAction2 demo')
-    parser.add_argument('--video', default='sample_video/output_cropped_video.mp4', help='video file/url')
+    parser.add_argument('--video', default='/workspace/sample_video/output_cropped_video.mp4', help='video file/url')
     parser.add_argument('--out_filename', default='/workspace/output/skeleton_demo.mp4', help='output filename')
 
     # skeleton action recognition 설정 및 가중치
     parser.add_argument(
         '--config',
+        # default=('/workspace/demo/demo_configs/stgcn_8xb16_bone_ntu120_keypoint-2d_infer.py'),
         # default=('/workspace/demo/demo_configs/posec3d_slowonly_k400_keypoint_infer.py'),
         default=('/workspace/demo/demo_configs/posec3d_slowonly_ntu60_keypoint_infer.py'),
         help='skeleton model config file path')
     parser.add_argument(
         '--checkpoints',
+        # default='/workspace/checkpoints/stgcn_8xb16-bone-u100-80e_ntu120-xsub-keypoint-2d_20221129-131e63c3.pth',
         # default='/workspace/checkpoints/slowonly_r50_8xb32-u48-240e_k400-keypoint_20230731-7f498b55.pth',
         default='/workspace/checkpoints/slowonly_r50_8xb16-u48-240e_ntu60-xsub-keypoint_20220815-38db104b.pth',
         # default=('https://download.openmmlab.com/mmaction/skeleton/posec3d/'
