@@ -1,7 +1,13 @@
 # Copyright (c) OpenMMLab. All rights reserved.
+import torch
+import torch.nn as nn
+from pathlib import Path
+from tqdm import tqdm
+
+import os
 import cv2
+import mmcv
 import logging
-from datetime import datetime
 import argparse
 import os.path as osp
 from collections import defaultdict
@@ -10,19 +16,19 @@ from tempfile import TemporaryDirectory
 import mmengine
 import numpy as np
 
-from mmaction.apis import detection_inference, pose_inference
-from mmaction.utils import frame_extract
+from mmaction.apis import pose_inference
+from mmengine.structures import InstanceData
 
+from typing import List, Optional, Tuple, Union
 
-
-# args = abc.abstractproperty()
+# 기본 설정 및 로깅 설정
 class Args:
     def __init__(self):
-        self.det_config = '/workspace/demo/demo_configs/faster-rcnn_r50-caffe_fpn_ms-1x_coco-person.py'  # noqa: E501
-        self.det_checkpoint = '/workspace/tools/data/skeleton/faster_rcnn_r50_fpn_1x_coco-person_20201216_175929-d022e227.pth'  # noqa: E501
+        self.det_config = '/workspace/demo/demo_configs/faster-rcnn_r50-caffe_fpn_ms-1x_coco-person.py'
+        self.det_checkpoint = '/workspace/tools/data/skeleton/faster_rcnn_r50_fpn_1x_coco-person_20201216_175929-d022e227.pth'
         self.det_score_thr = 0.5
-        self.pose_config = '/workspace/demo/demo_configs/td-hm_hrnet-w32_8xb64-210e_coco-256x192_infer.py'  # noqa: E501
-        self.pose_checkpoint = '/workspace/tools/data/skeleton/hrnet_w32_coco_256x192-c78dce93_20200708.pth'  # noqa: E501
+        self.pose_config = '/workspace/demo/demo_configs/td-hm_hrnet-w32_8xb64-210e_coco-256x192_infer.py'
+        self.pose_checkpoint = '/workspace/tools/data/skeleton/hrnet_w32_coco_256x192-c78dce93_20200708.pth'
 
 args = Args()
 
@@ -30,6 +36,7 @@ def setup_logging(log_file):
     logging.basicConfig(filename=log_file,
                         level=logging.ERROR,
                         format='%(asctime)s - %(levelname)s - %(message)s')
+
 
 def intersection(b0, b1):
     l, r = max(b0[0], b1[0]), min(b0[2], b1[2])
@@ -241,15 +248,106 @@ def ntu_det_postproc(vid, det_results):
         return bboxes2bbox(det_results, len(det_results))
 
 
-def pose_inference_with_align(args, frame_paths, det_results):
+def pose_inference_with_align(model, args, frame, det_result):
     # filter frame without det bbox
-    det_results = [
-        frm_dets for frm_dets in det_results if frm_dets.shape[0] > 0
-    ]
+    
+    if det_result.shape[0] > 0:
+        pose = pose_inference(model, frame, det_result)
+    else:
+        pose = None 
+    return pose
 
-    pose_results, _ = pose_inference(args.pose_config, args.pose_checkpoint,
-                                     frame_paths, det_results, args.device)
+
+def frame_extract(video_path: str,
+                  short_side: Optional[int] = None,):
+
+    vid = cv2.VideoCapture(video_path)
+    resize = False
+
+    flag, frame = vid.read()
+    new_h, new_w = None, None
+    if short_side is not None:
+        if new_h is None:
+            h, w, _ = frame.shape
+            new_w, new_h = mmcv.rescale_size((w, h), (short_side, np.Inf))
+            shape = (new_h, new_w)
+            resize = True
+    else:
+        shape = frame.shape
+        
+    while flag:
+        if resize:
+            frame = mmcv.imresize(frame, (new_w, new_h))
+
+        yield frame
+        flag, frame = vid.read()
+
+def detection_inference(model, frame,
+                        det_score_thr: float = 0.9,
+                        det_cat_id: int = 0,
+                        with_score: bool = False) -> tuple:
+    try:
+        from mmdet.apis import inference_detector
+        from mmdet.structures import DetDataSample
+    except (ImportError, ModuleNotFoundError):
+        raise ImportError('Failed to import `inference_detector` and '
+                          '`init_detector` from `mmdet.apis`. These apis are '
+                          'required in this inference api! ')
+
+    # print('Performing Human Detection for each frame')
+    # for frame_path in track_iter_progress(frame_paths):
+    # for frame_path in frame_paths:
+    det_data_sample: DetDataSample = inference_detector(model, frame)
+    pred_instance = det_data_sample.pred_instances.cpu().numpy()
+    bboxes = pred_instance.bboxes
+    scores = pred_instance.scores
+    # We only keep human detection bboxs with score larger
+    # than `det_score_thr` and category id equal to `det_cat_id`.
+    valid_idx = np.logical_and(pred_instance.labels == det_cat_id,
+                                pred_instance.scores > det_score_thr)
+    bboxes = bboxes[valid_idx]
+    scores = scores[valid_idx]
+
+    if with_score:
+        bboxes = np.concatenate((bboxes, scores[:, None]), axis=-1)
+    return bboxes
+
+def pose_inference(model, frame,
+                   det_result) -> tuple:
+
+    try:
+        from mmpose.apis import inference_topdown
+        from mmpose.structures import PoseDataSample, merge_data_samples
+    except (ImportError, ModuleNotFoundError):
+        raise ImportError('Failed to import `inference_topdown` and '
+                          '`init_model` from `mmpose.apis`. These apis '
+                          'are required in this inference api! ')
+
+    # print('Performing Human Pose Estimation for each frame')
+    # for f, d in track_iter_progress(list(zip(frame_paths, det_results))):
+
+    pose_data_samples: List[PoseDataSample] \
+        = inference_topdown(model, frame, det_result[..., :4], bbox_format='xyxy')
+    pose_data_sample = merge_data_samples(pose_data_samples)
+    pose_data_sample.dataset_meta = model.dataset_meta
+    # make fake pred_instances
+    if not hasattr(pose_data_sample, 'pred_instances'):
+        num_keypoints = model.dataset_meta['num_keypoints']
+        pred_instances_data = dict(
+            keypoints=np.empty(shape=(0, num_keypoints, 2)),
+            keypoints_scores=np.empty(shape=(0, 17), dtype=np.float32),
+            bboxes=np.empty(shape=(0, 4), dtype=np.float32),
+            bbox_scores=np.empty(shape=(0), dtype=np.float32))
+        pose_data_sample.pred_instances = InstanceData(
+            **pred_instances_data)
+
+    pose = pose_data_sample.pred_instances.to_dict()
+
+    return pose
+
+def keypoint_scores(pose_results):
     # align the num_person among frames
+    num_frames = len(pose_results)
     num_persons = max([pose['keypoints'].shape[0] for pose in pose_results])
     num_points = pose_results[0]['keypoints'].shape[1]
     num_frames = len(pose_results)
@@ -265,44 +363,76 @@ def pose_inference_with_align(args, frame_paths, det_results):
 
     return keypoints, scores
 
-def get_video_shape(video_path):
-    # 비디오 파일에서 프레임 크기 추출
-    cap = cv2.VideoCapture(video_path)
-    if not cap.isOpened():
-        raise ValueError(f"Unable to open video file {video_path}")
-    width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-    height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-    cap.release()
-    return (height, width)
 
-def ntu_pose_extraction(vid, label, skip_postproc=False):
-    tmp_dir = TemporaryDirectory()
-    frame_paths, _ = frame_extract(vid, out_dir=tmp_dir.name)
-    det_results, _ = detection_inference(
-        args.det_config,
-        args.det_checkpoint,
-        frame_paths,
-        args.det_score_thr,
-        device=args.device,
-        with_score=True)
+def init_detect_model(det_config: Union[str, Path, mmengine.Config, nn.Module],
+            det_checkpoint: str, device: Union[str, torch.device] = 'cuda:0'):
+    try:
+        from mmdet.apis import init_detector
+    except (ImportError, ModuleNotFoundError):
+        raise ImportError('Failed to import `inference_detector` and '
+                          '`init_detector` from `mmdet.apis`. These apis are '
+                          'required in this inference api! ')
+    if isinstance(det_config, nn.Module):
+        model = det_config
+    else:
+        model = init_detector(
+            config=det_config, checkpoint=det_checkpoint, device=device)
+    return model
 
-    if not skip_postproc:
-        det_results = ntu_det_postproc(vid, det_results)
+def init_pose_model(pose_config: Union[str, Path, mmengine.Config, nn.Module],
+                   pose_checkpoint: str,
+                   device: Union[str, torch.device] = 'cuda:0') -> tuple:
+
+    try:
+        from mmpose.apis import init_model
+    except (ImportError, ModuleNotFoundError):
+        raise ImportError('Failed to import `inference_topdown` and '
+                          '`init_model` from `mmpose.apis`. These apis '
+                          'are required in this inference api! ')
+    if isinstance(pose_config, nn.Module):
+        model = pose_config
+    else:
+        model = init_model(pose_config, pose_checkpoint, device)
+    return model
+
+
+def pose_extraction(dmodel, pmodel, vid, label, skip_postproc=False):
+    frame_gen = frame_extract(vid, 720)
+    # frame_gen = tqdm(frame_gen, desc="Processing Frames", unit="frame")
+    first = True
+    pose_results = []
+    for frame in frame_gen:
+        if first:
+            img_shape = frame[:2]
+            first = False
+        result = detection_inference(
+            dmodel,
+            frame,
+            args.det_score_thr,
+            with_score=True)
+
+        # if not skip_postproc:
+        #     det_results = ntu_det_postproc(vid, det_results)
+
+        pose = pose_inference_with_align(pmodel, args, frame, result)
+        
+        if pose is not None:
+            pose_results.append(pose)
+
+    keypoints, scores = keypoint_scores(pose_results)
+    
 
     anno = dict()
-
-    keypoints, scores = pose_inference_with_align(args, frame_paths,
-                                                  det_results)
     anno['keypoint'] = keypoints
     anno['keypoint_score'] = scores
     anno['frame_dir'] = osp.splitext(osp.basename(vid))[0]
-    anno['img_shape'] = get_video_shape(vid)
-    anno['original_shape'] = anno['img_shape']
+    anno['img_shape'] = img_shape
+    anno['original_shape'] = img_shape 
     anno['total_frames'] = keypoints.shape[1]
     anno['label'] = label
-    tmp_dir.cleanup()
 
     return anno
+
 
 
 def parse_args():
@@ -316,12 +446,22 @@ def parse_args():
     args = parser.parse_args()
     return args
 
-def main():
+
+if __name__ == '__main__':
     global_args = parse_args()
     args.device = global_args.device
+    args.video = global_args.video
     args.output = global_args.output
     args.skip_postproc = global_args.skip_postproc
 
+    dmodel = init_detect_model( args.det_config,
+                        args.det_checkpoint,
+                        device=args.device)
+    
+    pmodel = init_pose_model( args.pose_config,
+                        args.det_checkpoint,
+                        device=args.device)
+    
     # 로그 파일 설정
     log_file = osp.join(osp.dirname(global_args.output), 'error_log.txt')
     setup_logging(log_file)
@@ -330,32 +470,27 @@ def main():
     with open(global_args.txt_file, 'r') as f:
         lines = f.readlines()
 
+    tasks = []
+
     # 각 비디오 경로에 대해 포즈 추출 및 pkl 파일 저장
     for line in lines:
         line_parts = line.split()
         video_path = line_parts[0]  # 비디오 경로 추출
         label = int(line_parts[1])  # 레이블
-        print(f'Processing video: {video_path} with label: {label}')
+        # print(f'Processing video: {video_path} with label: {label}')
 
-        pkl_name = osp.splitext(osp.basename(video_path))[0] + ".pkl"
-        pkl_path = osp.join(global_args.output, pkl_name)
-        
         # 비디오 파일이 존재하는지 확인
         if not osp.exists(video_path):
             print(f"Video file {video_path} does not exist. Skipping.")
             continue
-        
+
         try:
-            # 포즈 추출
-            anno = ntu_pose_extraction(video_path, label, args.skip_postproc)
-            
+            anno = pose_extraction(dmodel, pmodel, video_path, label, args.skip_postproc)
+            pkl_name = osp.splitext(osp.basename(video_path))[0] + ".pkl"
+            pkl_path = osp.join(args.output, pkl_name)
             mmengine.dump(anno, pkl_path)
-            print(f'Saved annotation to {args.output}')
-        
+
         except Exception as e:
             # 오류 로그 파일에 기록
             logging.error(f'Error processing {video_path}: {e}')
             print(f'Error processing {video_path}: {e}. Check the log file for details.')
-
-if __name__ == '__main__':
-    main()
