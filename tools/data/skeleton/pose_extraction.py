@@ -24,8 +24,8 @@ from typing import List, Optional, Tuple, Union
 # 기본 설정 및 로깅 설정
 class Args:
     def __init__(self):
-        self.det_config = '/workspace/demo/demo_configs/faster-rcnn_r50-caffe_fpn_ms-1x_coco-person.py'
-        self.det_checkpoint = '/workspace/tools/data/skeleton/faster_rcnn_r50_fpn_1x_coco-person_20201216_175929-d022e227.pth'
+        self.det_config = '/workspace/demo/demo_configs/faster-rcnn_r50_fpn_2x_coco_infer.py'
+        self.det_checkpoint = '/workspace/tools/data/skeleton/faster_rcnn_r50_fpn_2x_coco_bbox_mAP-0.384_20200504_210434-a5d8aa15.pth'
         self.det_score_thr = 0.5
         self.pose_config = '/workspace/demo/demo_configs/td-hm_hrnet-w32_8xb64-210e_coco-256x192_infer.py'
         self.pose_checkpoint = '/workspace/tools/data/skeleton/hrnet_w32_coco_256x192-c78dce93_20200708.pth'
@@ -439,7 +439,7 @@ def parse_args():
     parser = argparse.ArgumentParser(
         description='Generate Pose Annotation for a single NTURGB-D video')
     parser.add_argument('--video', default="/data/test/violence/fight/Fighting002_x264.mp4", type=str, help='source video')
-    parser.add_argument('--txt-file', default='/data/aihub/violence/output/custom_train.txt', type=str, help='path to txt file containing video paths')
+    parser.add_argument('--txt-file', default='/data/aihub/violence/output/custom_train1.txt', type=str, help='path to txt file containing video paths')
     parser.add_argument('--output', default="/data/aihub/violence/train_pkl", type=str, help='output pickle name')
     parser.add_argument('--device', type=str, default='cuda:0')
     parser.add_argument('--skip-postproc', action='store_false')
@@ -459,7 +459,7 @@ if __name__ == '__main__':
                         device=args.device)
     
     pmodel = init_pose_model( args.pose_config,
-                        args.det_checkpoint,
+                        args.pose_checkpoint,
                         device=args.device)
     
     # 로그 파일 설정
@@ -489,6 +489,8 @@ if __name__ == '__main__':
             pkl_name = osp.splitext(osp.basename(video_path))[0] + ".pkl"
             pkl_path = osp.join(args.output, pkl_name)
             mmengine.dump(anno, pkl_path)
+
+            torch.cuda.empty_cache()
 
         except Exception as e:
             # 오류 로그 파일에 기록

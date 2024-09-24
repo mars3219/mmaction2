@@ -1,9 +1,9 @@
 version: "3"
 
 services:
-  mmaction2:
+  mmaction2_2nd:
     image: mmaction2:v120 
-    container_name: mmaction2
+    container_name: mmaction2_2nd
     deploy:
       resources:
         reservations:
