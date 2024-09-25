@@ -634,3 +634,129 @@ Error processing /data/aihub/violence/output/event/fight/cut_180-5_cam02_fight01
   warnings.warn(
 /opt/conda/lib/python3.10/site-packages/mmcv/transforms/loading.py:69: DeprecationWarning: "file_client_args" will be deprecated in future. Please use "backend_args" instead
   warnings.warn(
+Loads checkpoint by local backend from path: /workspace/tools/data/skeleton/faster_rcnn_r50_fpn_2x_coco_bbox_mAP-0.384_20200504_210434-a5d8aa15.pth
+Loads checkpoint by local backend from path: /workspace/tools/data/skeleton/hrnet_w32_coco_256x192-c78dce93_20200708.pth
+Traceback (most recent call last):
+  File "/workspace/tools/data/skeleton/pose_extraction.py", line 497, in <module>
+    anno = pose_extraction(dmodel, pmodel, video_path, label, args.skip_postproc)
+  File "/workspace/tools/data/skeleton/pose_extraction.py", line 415, in pose_extraction
+    pose = pose_inference_with_align(pmodel, args, frame, result)
+  File "/workspace/tools/data/skeleton/pose_extraction.py", line 255, in pose_inference_with_align
+    pose = pose_inference(model, frame, det_result)
+  File "/workspace/tools/data/skeleton/pose_extraction.py", line 330, in pose_inference
+    = inference_topdown(model, frame, det_result[..., :4], bbox_format='xyxy')
+  File "/opt/conda/lib/python3.10/site-packages/mmpose/apis/inference.py", line 196, in inference_topdown
+    results = model.test_step(batch)
+  File "/opt/conda/lib/python3.10/site-packages/mmengine/model/base_model/base_model.py", line 145, in test_step
+    return self._run_forward(data, mode='predict')  # type: ignore
+  File "/opt/conda/lib/python3.10/site-packages/mmengine/model/base_model/base_model.py", line 361, in _run_forward
+    results = self(**data, mode=mode)
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1532, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1541, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/mmpose/models/pose_estimators/base.py", line 161, in forward
+    return self.predict(inputs, data_samples)
+  File "/opt/conda/lib/python3.10/site-packages/mmpose/models/pose_estimators/topdown.py", line 104, in predict
+    _feats_flip = self.extract_feat(inputs.flip(-1))
+  File "/opt/conda/lib/python3.10/site-packages/mmpose/models/pose_estimators/base.py", line 207, in extract_feat
+    x = self.backbone(inputs)
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1532, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1541, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/mmpose/models/backbones/hrnet.py", line 591, in forward
+    y_list = self.stage3(x_list)
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1532, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1541, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/container.py", line 217, in forward
+    input = module(input)
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1532, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1541, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/mmpose/models/backbones/hrnet.py", line 200, in forward
+    x[i] = self.branches[i](x[i])
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1532, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1541, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/container.py", line 217, in forward
+    input = module(input)
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1532, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1541, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/mmpose/models/backbones/resnet.py", line 127, in forward
+    out = _inner_forward(x)
+  File "/opt/conda/lib/python3.10/site-packages/mmpose/models/backbones/resnet.py", line 111, in _inner_forward
+    out = self.norm1(out)
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1532, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1541, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/batchnorm.py", line 175, in forward
+    return F.batch_norm(
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/functional.py", line 2509, in batch_norm
+    return torch.batch_norm(
+KeyboardInterrupt
+/opt/conda/lib/python3.10/tempfile.py:869: ResourceWarning: Implicitly cleaning up <TemporaryDirectory '/tmp/tmp_t6f38cq'>
+  _warnings.warn(warn_message, ResourceWarning)
+/opt/conda/lib/python3.10/site-packages/mmcv/__init__.py:20: UserWarning: On January 1, 2023, MMCV will release v2.0.0, in which it will remove components related to the training process and add a data transformation module. In addition, it will rename the package names mmcv to mmcv-lite and mmcv-full to mmcv. See https://github.com/open-mmlab/mmcv/blob/master/docs/en/compatibility.md for more details.
+  warnings.warn(
+/opt/conda/lib/python3.10/site-packages/mmpose/apis/inference.py:121: UserWarning: Can not load dataset_meta from the checkpoint or the model config. Use COCO metainfo by default.
+  warnings.warn('Can not load dataset_meta from the checkpoint or the '
+/opt/conda/lib/python3.10/site-packages/mmpose/datasets/datasets/utils.py:102: UserWarning: The metainfo config file "configs/_base_/datasets/coco.py" does not exist. A matched config file "/opt/conda/lib/python3.10/site-packages/mmpose/.mim/configs/_base_/datasets/coco.py" will be used instead.
+  warnings.warn(
+/opt/conda/lib/python3.10/site-packages/mmcv/transforms/loading.py:69: DeprecationWarning: "file_client_args" will be deprecated in future. Please use "backend_args" instead
+  warnings.warn(
+Loads checkpoint by local backend from path: /workspace/tools/data/skeleton/faster_rcnn_r50_fpn_2x_coco_bbox_mAP-0.384_20200504_210434-a5d8aa15.pth
+Loads checkpoint by local backend from path: /workspace/tools/data/skeleton/hrnet_w32_coco_256x192-c78dce93_20200708.pth
+Traceback (most recent call last):
+  File "/workspace/tools/data/skeleton/pose_extraction.py", line 497, in <module>
+    anno = pose_extraction(dmodel, pmodel, video_path, label, args.skip_postproc)
+  File "/workspace/tools/data/skeleton/pose_extraction.py", line 415, in pose_extraction
+    pose = pose_inference_with_align(pmodel, args, frame, result)
+  File "/workspace/tools/data/skeleton/pose_extraction.py", line 255, in pose_inference_with_align
+    pose = pose_inference(model, frame, det_result)
+  File "/workspace/tools/data/skeleton/pose_extraction.py", line 330, in pose_inference
+    = inference_topdown(model, frame, det_result[..., :4], bbox_format='xyxy')
+  File "/opt/conda/lib/python3.10/site-packages/mmpose/apis/inference.py", line 196, in inference_topdown
+    results = model.test_step(batch)
+  File "/opt/conda/lib/python3.10/site-packages/mmengine/model/base_model/base_model.py", line 145, in test_step
+    return self._run_forward(data, mode='predict')  # type: ignore
+  File "/opt/conda/lib/python3.10/site-packages/mmengine/model/base_model/base_model.py", line 361, in _run_forward
+    results = self(**data, mode=mode)
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1532, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1541, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/mmpose/models/pose_estimators/base.py", line 161, in forward
+    return self.predict(inputs, data_samples)
+  File "/opt/conda/lib/python3.10/site-packages/mmpose/models/pose_estimators/topdown.py", line 103, in predict
+    _feats = self.extract_feat(inputs)
+  File "/opt/conda/lib/python3.10/site-packages/mmpose/models/pose_estimators/base.py", line 207, in extract_feat
+    x = self.backbone(inputs)
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1532, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1541, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/mmpose/models/backbones/hrnet.py", line 591, in forward
+    y_list = self.stage3(x_list)
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1532, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1541, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/container.py", line 217, in forward
+    input = module(input)
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1532, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1541, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/mmpose/models/backbones/hrnet.py", line 209, in forward
+    y += self.fuse_layers[i][j](x[j])
+KeyboardInterrupt
+/opt/conda/lib/python3.10/tempfile.py:869: ResourceWarning: Implicitly cleaning up <TemporaryDirectory '/tmp/tmpfzx4qqp7'>
+  _warnings.warn(warn_message, ResourceWarning)

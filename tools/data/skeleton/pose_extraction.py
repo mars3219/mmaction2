@@ -473,7 +473,7 @@ if __name__ == '__main__':
     tasks = []
 
     # output 파일 생성
-    output_file = osp.join(osp.dirname(global_args.output), f'output_{osp.basename(global_args.output)}')
+    output_file = osp.join(osp.dirname(global_args.output), f'output_{osp.basename(global_args.txt_file)}')
 
     # 각 비디오 경로에 대해 포즈 추출 및 pkl 파일 저장
     for line in lines:
