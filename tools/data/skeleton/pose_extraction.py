@@ -401,6 +401,7 @@ def pose_extraction(dmodel, pmodel, vid, label, skip_postproc=False):
     # frame_gen = tqdm(frame_gen, desc="Processing Frames", unit="frame")
     first = True
     pose_results = []
+
     for frame in frame_gen:
         if first:
             img_shape = frame[:2]
@@ -411,25 +412,24 @@ def pose_extraction(dmodel, pmodel, vid, label, skip_postproc=False):
             args.det_score_thr,
             with_score=True)
 
-        # if not skip_postproc:
-        #     det_results = ntu_det_postproc(vid, det_results)
-
         pose = pose_inference_with_align(pmodel, args, frame, result)
         
         if pose is not None:
             pose_results.append(pose)
 
-    keypoints, scores = keypoint_scores(pose_results)
+    if not pose_results:
+        anno = None
+    else:
+        keypoints, scores = keypoint_scores(pose_results)
     
-
-    anno = dict()
-    anno['keypoint'] = keypoints
-    anno['keypoint_score'] = scores
-    anno['frame_dir'] = osp.splitext(osp.basename(vid))[0]
-    anno['img_shape'] = img_shape
-    anno['original_shape'] = img_shape 
-    anno['total_frames'] = keypoints.shape[1]
-    anno['label'] = label
+        anno = dict()
+        anno['keypoint'] = keypoints
+        anno['keypoint_score'] = scores
+        anno['frame_dir'] = osp.splitext(osp.basename(vid))[0]
+        anno['img_shape'] = img_shape
+        anno['original_shape'] = img_shape 
+        anno['total_frames'] = keypoints.shape[1]
+        anno['label'] = label
 
     return anno
 
@@ -439,7 +439,7 @@ def parse_args():
     parser = argparse.ArgumentParser(
         description='Generate Pose Annotation for a single NTURGB-D video')
     parser.add_argument('--video', default="/data/test/violence/fight/Fighting002_x264.mp4", type=str, help='source video')
-    parser.add_argument('--txt-file', default='/data/aihub/violence/output/custom_train1.txt', type=str, help='path to txt file containing video paths')
+    parser.add_argument('--txt-file', default='/data/aihub/violence/output/custom_train1_missing_in_pkl.txt', type=str, help='path to txt file containing video paths')
     parser.add_argument('--output', default="/data/aihub/violence/train_pkl", type=str, help='output pickle name')
     parser.add_argument('--device', type=str, default='cuda:0')
     parser.add_argument('--skip-postproc', action='store_false')
@@ -472,6 +472,9 @@ if __name__ == '__main__':
 
     tasks = []
 
+    # output 파일 생성
+    output_file = osp.join(osp.dirname(global_args.output), f'output_{osp.basename(global_args.output)}')
+
     # 각 비디오 경로에 대해 포즈 추출 및 pkl 파일 저장
     for line in lines:
         line_parts = line.split()
@@ -484,11 +487,25 @@ if __name__ == '__main__':
             print(f"Video file {video_path} does not exist. Skipping.")
             continue
 
+        # 비디오 파일 크기 체크
+        video_size = os.path.getsize(video_path)  # 파일 크기 바이트 단위로
+        if video_size > 400 * 1024 * 1024:  # 500MB
+            logging.info(f"Video file size exceeds 500MB: {video_path}")
+            continue
+
         try:
             anno = pose_extraction(dmodel, pmodel, video_path, label, args.skip_postproc)
-            pkl_name = osp.splitext(osp.basename(video_path))[0] + ".pkl"
-            pkl_path = osp.join(args.output, pkl_name)
-            mmengine.dump(anno, pkl_path)
+            if anno is not None:
+                pkl_name = osp.splitext(osp.basename(video_path))[0] + ".pkl"
+                pkl_path = osp.join(args.output, pkl_name)
+                mmengine.dump(anno, pkl_path)
+
+                # pose extraction이 완료된 파일의 custom 형태로 저장
+                with open(output_file, 'w') as f:
+                    f.write(line)
+
+            else:
+                logging.info(f"No pose results found for video: {video_path}")
 
             torch.cuda.empty_cache()
 
