@@ -439,8 +439,8 @@ def parse_args():
     parser = argparse.ArgumentParser(
         description='Generate Pose Annotation for a single NTURGB-D video')
     parser.add_argument('--video', default="/data/test/violence/fight/Fighting002_x264.mp4", type=str, help='source video')
-    parser.add_argument('--txt-file', default='/data/aihub/violence/output/custom_train1_missing_in_pkl.txt', type=str, help='path to txt file containing video paths')
-    parser.add_argument('--output', default="/data/aihub/violence/train_pkl", type=str, help='output pickle name')
+    parser.add_argument('--txt-file', default='/data/aihub/violence/output/custom_val.txt', type=str, help='path to txt file containing video paths')
+    parser.add_argument('--output', default="/data/aihub/violence/val_pkl", type=str, help='output pickle name')
     parser.add_argument('--device', type=str, default='cuda:0')
     parser.add_argument('--skip-postproc', action='store_false')
     args = parser.parse_args()
@@ -501,8 +501,8 @@ if __name__ == '__main__':
                 mmengine.dump(anno, pkl_path)
 
                 # pose extraction이 완료된 파일의 custom 형태로 저장
-                with open(output_file, 'w') as f:
-                    f.write(line)
+                with open(output_file, 'a') as f:
+                    f.write(line + '\n')
 
             else:
                 logging.info(f"No pose results found for video: {video_path}")

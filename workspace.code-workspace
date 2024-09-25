@@ -9,9 +9,6 @@
 		{
 			"path": "../data"
 		},
-		{
-			"path": "../backup"
-		}
 	],
 	"settings": {}
 }

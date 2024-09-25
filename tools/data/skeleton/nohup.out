@@ -1,0 +1,8 @@
+/opt/conda/lib/python3.10/site-packages/mmcv/__init__.py:20: UserWarning: On January 1, 2023, MMCV will release v2.0.0, in which it will remove components related to the training process and add a data transformation module. In addition, it will rename the package names mmcv to mmcv-lite and mmcv-full to mmcv. See https://github.com/open-mmlab/mmcv/blob/master/docs/en/compatibility.md for more details.
+  warnings.warn(
+/opt/conda/lib/python3.10/site-packages/mmpose/apis/inference.py:121: UserWarning: Can not load dataset_meta from the checkpoint or the model config. Use COCO metainfo by default.
+  warnings.warn('Can not load dataset_meta from the checkpoint or the '
+/opt/conda/lib/python3.10/site-packages/mmpose/datasets/datasets/utils.py:102: UserWarning: The metainfo config file "configs/_base_/datasets/coco.py" does not exist. A matched config file "/opt/conda/lib/python3.10/site-packages/mmpose/.mim/configs/_base_/datasets/coco.py" will be used instead.
+  warnings.warn(
+/opt/conda/lib/python3.10/site-packages/mmcv/transforms/loading.py:69: DeprecationWarning: "file_client_args" will be deprecated in future. Please use "backend_args" instead
+  warnings.warn(
