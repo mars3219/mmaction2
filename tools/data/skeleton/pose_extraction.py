@@ -502,7 +502,7 @@ if __name__ == '__main__':
 
                 # pose extraction이 완료된 파일의 custom 형태로 저장
                 with open(output_file, 'a') as f:
-                    f.write(line + '\n')
+                    f.write(line)
 
             else:
                 logging.info(f"No pose results found for video: {video_path}")

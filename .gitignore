@@ -114,6 +114,7 @@ venv.bak/
 
 # custom
 /data
+/work_dir
 .vscode
 .idea
 *.pkl
