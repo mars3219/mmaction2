@@ -1,9 +1,9 @@
 version: "3"
 
 services:
-  mmaction2_2nd:
+  mmaction2:
     image: mmaction2:v120 
-    container_name: mmaction2_2nd
+    container_name: mmaction2
     deploy:
       resources:
         reservations:
@@ -21,11 +21,11 @@ services:
       - ${HOME_DIR}/.Xauthority:/root/.Xauthority
       - /run/user/1000/pulse:/run/user/1000/pulse
       - /dev/snd:/dev/snd
-      - /data:/data
-      - /backup:/backup
+      - ${HOME_DIR}/HDD:/data
     devices:
       - /dev/snd:/dev/snd
     environment:
+      - XAUTHORITY=${HOME_DIR}/.Xauthority
       - USER=${USER}
       - PULSE_SERVER=unix:/run/user/1000/pulse/native
       - DISPLAY=${DISPLAY}

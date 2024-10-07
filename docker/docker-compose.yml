@@ -21,10 +21,12 @@ services:
       - ${HOME_DIR}/.Xauthority:/root/.Xauthority
       - /run/user/1000/pulse:/run/user/1000/pulse
       - /dev/snd:/dev/snd
-      - ${HOME_DIR}/HDD:/data
+      - /data:/data
+      - /backup:/backup
     devices:
       - /dev/snd:/dev/snd
     environment:
+      - XAUTHORITY=/root/.Xauthority
       - USER=${USER}
       - PULSE_SERVER=unix:/run/user/1000/pulse/native
       - DISPLAY=${DISPLAY}

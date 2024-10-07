@@ -4,6 +4,7 @@ import torch.nn as nn
 from pathlib import Path
 from tqdm import tqdm
 
+import pickle
 import os
 import cv2
 import mmcv
@@ -21,14 +22,14 @@ from mmengine.structures import InstanceData
 
 from typing import List, Optional, Tuple, Union
 
+TOTAL_FRAMES = 0
+
 # 기본 설정 및 로깅 설정
 class Args:
     def __init__(self):
         self.det_config = '/workspace/demo/demo_configs/faster-rcnn_r50_fpn_2x_coco_infer.py'
         self.det_checkpoint = '/workspace/tools/data/skeleton/faster_rcnn_r50_fpn_2x_coco_bbox_mAP-0.384_20200504_210434-a5d8aa15.pth'
         self.det_score_thr = 0.5
-        self.pose_config = '/workspace/demo/demo_configs/td-hm_hrnet-w32_8xb64-210e_coco-256x192_infer.py'
-        self.pose_checkpoint = '/workspace/tools/data/skeleton/hrnet_w32_coco_256x192-c78dce93_20200708.pth'
 
 args = Args()
 
@@ -259,11 +260,11 @@ def pose_inference_with_align(model, args, frame, det_result):
 
 
 def frame_extract(video_path: str,
-                  short_side: Optional[int] = None,):
+                  short_side: Optional[int] = None):
 
     vid = cv2.VideoCapture(video_path)
     resize = False
-
+    TOTAL_FRAMES = int(vid.get(cv2.CAP_PROP_FRAME_COUNT))
     flag, frame = vid.read()
     new_h, new_w = None, None
     if short_side is not None:
@@ -312,41 +313,10 @@ def detection_inference(model, frame,
         bboxes = np.concatenate((bboxes, scores[:, None]), axis=-1)
     return bboxes
 
-def pose_inference(model, frame,
-                   det_result) -> tuple:
-
-    try:
-        from mmpose.apis import inference_topdown
-        from mmpose.structures import PoseDataSample, merge_data_samples
-    except (ImportError, ModuleNotFoundError):
-        raise ImportError('Failed to import `inference_topdown` and '
-                          '`init_model` from `mmpose.apis`. These apis '
-                          'are required in this inference api! ')
-
-    # print('Performing Human Pose Estimation for each frame')
-    # for f, d in track_iter_progress(list(zip(frame_paths, det_results))):
-
-    pose_data_samples: List[PoseDataSample] \
-        = inference_topdown(model, frame, det_result[..., :4], bbox_format='xyxy')
-    pose_data_sample = merge_data_samples(pose_data_samples)
-    pose_data_sample.dataset_meta = model.dataset_meta
-    # make fake pred_instances
-    if not hasattr(pose_data_sample, 'pred_instances'):
-        num_keypoints = model.dataset_meta['num_keypoints']
-        pred_instances_data = dict(
-            keypoints=np.empty(shape=(0, num_keypoints, 2)),
-            keypoints_scores=np.empty(shape=(0, 17), dtype=np.float32),
-            bboxes=np.empty(shape=(0, 4), dtype=np.float32),
-            bbox_scores=np.empty(shape=(0), dtype=np.float32))
-        pose_data_sample.pred_instances = InstanceData(
-            **pred_instances_data)
-
-    pose = pose_data_sample.pred_instances.to_dict()
-
-    return pose
 
 def keypoint_scores(pose_results):
     # align the num_person among frames
+    num_frames = len(pose_results)
     num_persons = max([pose['keypoints'].shape[0] for pose in pose_results])
     num_points = pose_results[0]['keypoints'].shape[1]
     num_frames = len(pose_results)
@@ -378,30 +348,17 @@ def init_detect_model(det_config: Union[str, Path, mmengine.Config, nn.Module],
             config=det_config, checkpoint=det_checkpoint, device=device)
     return model
 
-def init_pose_model(pose_config: Union[str, Path, mmengine.Config, nn.Module],
-                   pose_checkpoint: str,
-                   device: Union[str, torch.device] = 'cuda:0') -> tuple:
 
-    try:
-        from mmpose.apis import init_model
-    except (ImportError, ModuleNotFoundError):
-        raise ImportError('Failed to import `inference_topdown` and '
-                          '`init_model` from `mmpose.apis`. These apis '
-                          'are required in this inference api! ')
-    if isinstance(pose_config, nn.Module):
-        model = pose_config
-    else:
-        model = init_model(pose_config, pose_checkpoint, device)
-    return model
-
-
-def pose_extraction(dmodel, pmodel, vid, label, skip_postproc=False):
+def pose_extraction(dmodel, vid, pkl, label, skip_postproc=False):
     frame_gen = frame_extract(vid, 720)
-    # frame_gen = tqdm(frame_gen, desc="Processing Frames", unit="frame")
     first = True
-    pose_results = []
+    without_bbox = []
 
-    for frame in frame_gen:
+    # 피클 파일 열기
+    with open(pkl, 'rb') as file:
+        data = pickle.load(file)
+
+    for idx, frame in enumerate(frame_gen):
         if first:
             img_shape = frame[:2]
             first = False
@@ -411,24 +368,42 @@ def pose_extraction(dmodel, pmodel, vid, label, skip_postproc=False):
             args.det_score_thr,
             with_score=True)
 
-        pose = pose_inference_with_align(pmodel, args, frame, result)
-        
-        if pose is not None:
-            pose_results.append(pose)
-
-    if not pose_results:
-        anno = None
-    else:
-        keypoints, scores = keypoint_scores(pose_results)
+        if result.shape[0] < 1:
+            without_bbox.append(idx)
     
-        anno = dict()
-        anno['keypoint'] = keypoints
-        anno['keypoint_score'] = scores
-        anno['frame_dir'] = osp.splitext(osp.basename(vid))[0]
-        anno['img_shape'] = img_shape
-        anno['original_shape'] = img_shape 
-        anno['total_frames'] = keypoints.shape[1]
-        anno['label'] = label
+    if idx + 1 == data['keypoint'].shape[1] + len(without_bbox):
+        keypoints = np.zeros((data['keypoint'].shape[0], idx + 1, data['keypoint'].shape[2], 2), dtype=np.float32)
+        scores = np.zeros((data['keypoint_score'].shape[0], idx + 1, data['keypoint_score'].shape[2]), dtype=np.float32)
+
+        without_idx = 0
+        infer_idx = 0
+        try:
+            for f_idx in range(idx + 1):
+                if f_idx != without_bbox[without_idx]:
+                    keypoints[:, f_idx, :, :] = data['keypoint'][:, infer_idx, :, :]
+                    scores[:, f_idx, :] = data['keypoint_score'][:, infer_idx, :]
+                    infer_idx += 1
+                else:
+                    if len(without_bbox) - 1 != without_idx:
+                        without_idx += 1
+        except:
+            print("error")
+    elif idx == data['keypoint'].shape[1]:
+        print(f'Same')
+        keypoints = data['keypoint']
+        scores = data['keypoint_score']
+    else:
+        logging.info(f"Unmatching frames between origin and pickle: {video_path}")
+        
+    anno = dict()
+    anno['keypoint'] = keypoints
+    anno['keypoint_score'] = scores
+    anno['frame_dir'] = osp.splitext(osp.basename(vid))[0]
+    anno['img_shape'] = img_shape
+    anno['original_shape'] = img_shape 
+    anno['total_frames'] = keypoints.shape[1]
+    anno['label'] = label
+    anno['without_bbox'] = without_bbox
 
     return anno
 
@@ -437,9 +412,9 @@ def pose_extraction(dmodel, pmodel, vid, label, skip_postproc=False):
 def parse_args():
     parser = argparse.ArgumentParser(
         description='Generate Pose Annotation for a single NTURGB-D video')
-    parser.add_argument('--video', default="/data/test/violence/fight/Fighting002_x264.mp4", type=str, help='source video')
-    parser.add_argument('--txt-file', default='/data/aihub/violence/output/custom_val.txt', type=str, help='path to txt file containing video paths')
-    parser.add_argument('--output', default="/data/aihub/violence/val_pkl", type=str, help='output pickle name')
+    # parser.add_argument('--video', default="/data/test/violence/fight/Fighting002_x264.mp4", type=str, help='source video')
+    parser.add_argument('--txt-file', default='/data/aihub/violence/output_custom_train1.txt', type=str, help='path to txt file containing video paths')
+    parser.add_argument('--output', default="/data/aihub/violence/train_pkl", type=str, help='output pickle name')
     parser.add_argument('--device', type=str, default='cuda:0')
     parser.add_argument('--skip-postproc', action='store_false')
     args = parser.parse_args()
@@ -449,7 +424,7 @@ def parse_args():
 if __name__ == '__main__':
     global_args = parse_args()
     args.device = global_args.device
-    args.video = global_args.video
+    # args.video = global_args.video
     args.output = global_args.output
     args.skip_postproc = global_args.skip_postproc
 
@@ -457,9 +432,6 @@ if __name__ == '__main__':
                         args.det_checkpoint,
                         device=args.device)
     
-    pmodel = init_pose_model( args.pose_config,
-                        args.pose_checkpoint,
-                        device=args.device)
     
     # 로그 파일 설정
     log_file = osp.join(osp.dirname(global_args.output), 'error_log.txt')
@@ -493,11 +465,15 @@ if __name__ == '__main__':
             continue
 
         try:
-            anno = pose_extraction(dmodel, pmodel, video_path, label, args.skip_postproc)
+            pkl_name = osp.splitext(osp.basename(video_path))[0] + ".pkl"
+
+            pkl_path = osp.join(args.output, pkl_name)
+            temp_output_path = osp.join(args.output + "_m", pkl_name)
+            
+
+            anno = pose_extraction(dmodel, video_path, pkl_path, label, args.skip_postproc)
             if anno is not None:
-                pkl_name = osp.splitext(osp.basename(video_path))[0] + ".pkl"
-                pkl_path = osp.join(args.output, pkl_name)
-                mmengine.dump(anno, pkl_path)
+                mmengine.dump(anno, temp_output_path)
 
                 # pose extraction이 완료된 파일의 custom 형태로 저장
                 with open(output_file, 'a') as f:
