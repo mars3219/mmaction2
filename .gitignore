@@ -145,6 +145,7 @@ work_dirs/
 mmaction/tools/*
 
 *.ipynb
+.out
 
 # unignore ipython notebook files in demo
 !demo/*.ipynb
